@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+
+<h1>Signed PDF check </h1>
+
+<p th:text="${message}" />
+
+<form method="POST" action="/" enctype="multipart/form-data">
+    <input type="file" name="file" /><br/><br/>
+    <input type="submit" value="Submit" />
+</form>
+
+</body>
+</html>

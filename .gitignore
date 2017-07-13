@@ -1,5 +1,6 @@
 
 # Created by https://www.gitignore.io/api/java,intellij,gcov
+*.pdf
 
 ### Java ###
 *.class
