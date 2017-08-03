@@ -15,7 +15,7 @@
 
     <properties>
         <!-- The main class to start by executing java -jar -->
-        <start-class>gr.hcg.UploadController</start-class>
+        <start-class>gr.hcg.Application</start-class>
 
         <maven.compiler.source>1.7</maven.compiler.source>
         <maven.compiler.target>1.7</maven.compiler.target>
