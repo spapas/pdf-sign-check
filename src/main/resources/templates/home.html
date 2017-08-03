@@ -13,6 +13,66 @@
     <input type="submit" value="Submit" />
 </form>
 
+<!--/*@thymesVar id="pdfSignatureInfo" type="List<PDFSignatureInfo>"*/-->
+<!--/*@thymesVar id="signature" type="PDFSignatureInfo"*/-->
+<div class="signatureInfo" th:each="signature, iterationStatus: ${pdfSignatureInfo}">
+    <h2>Signature #<span th:text="${iterationStatus.count}" ></span></h2>
+    <h3>Info</h3>
+    Reason:<span th:text="${signature.reason}"></span><br />
+    Name: <span th:text="${signature.name}"></span><br />
+    SubFilter: <span th:text="${signature.subFilter}"></span><br />
+    Filter: <span th:text="${signature.filter}"></span><br />
+    ContactInfo: <span th:text="${signature.contactInfo}"></span><br />
+    Location: <span th:text="${signature.location}"></span><br />
+
+    SignDate: <span th:text="${signature.signDate}"></span><br />
+    CoversWholeDocument: <span th:text="${signature.coversWholeDocument}"></span><br />
+
+    IsSelfSigned: <span th:text="${signature.isSelfSigned}"></span><br />
+    SignatureVerified: <span th:text="${signature.signatureVerified}"></span><br />
+
+
+    <h3>Entries</h3>
+    <ul>
+        <li th:each="entry: ${signature.entries}">
+            <span th:text="${entry.key}" ></span>:
+            <span th:text="${entry.value}" ></span>
+        </li>
+    </ul>
+
+    <h3>Certificate info</h3>
+
+    IssuerDN: <span th:text="${signature.certificateInfo.issuerDN}"></span><br />
+    SubjectDN: <span th:text="${signature.certificateInfo.subjectDN}"></span><br />
+
+    NotValidBefore: <span th:text="${signature.certificateInfo.notValidBefore}"></span><br />
+    NotValidAfter: <span th:text="${signature.certificateInfo.notValidAfter}"></span><br />
+
+    SignAlgorithm: <span th:text="${signature.certificateInfo.signAlgorithm}"></span><br />
+    SerialNumber: <span th:text="${signature.certificateInfo.serial}"></span><br />
+
+    <h4>Issuer OIDs</h4>
+    <ul>
+        <li th:each="entry: ${signature.certificateInfo.issuerOIDs}">
+            <span th:text="${entry.key}" ></span>:
+            <span th:text="${entry.value}" ></span>
+        </li>
+    </ul>
+
+    <h4>Subject OIDs</h4>
+    <ul>
+        <li th:each="entry: ${signature.certificateInfo.subjectOIDs}">
+            <span th:text="${entry.key}" ></span>:
+            <span th:text="${entry.value}" ></span>
+        </li>
+    </ul>
+
+
+</div>
+
+
+
+
 <footer>
     <!--/*@thymesVar id="config" type=""*/-->
     <p th:text="${config}" />

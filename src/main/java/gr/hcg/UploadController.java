@@ -6,12 +6,14 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.naming.InvalidNameException;
 import java.io.IOException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import java.security.SignatureException;
 import java.security.cert.CertificateException;
+import java.util.List;
 
 @Controller
 public class UploadController {
@@ -37,12 +39,13 @@ public class UploadController {
         try {
 
             byte[] bytes = file.getBytes();
-            PDFSignatureInfoParser.getPDFSignatureInfo(bytes);
+            List<PDFSignatureInfo> info = PDFSignatureInfoParser.getPDFSignatureInfo(bytes);
 
             model.addAttribute("message", "OK");
+            model.addAttribute("pdfSignatureInfo", info);
 
-        } catch (IOException | CertificateException| NoSuchAlgorithmException | InvalidKeyException |SignatureException | NoSuchProviderException e) {
-            model.addAttribute("message", e.getMessage());
+        } catch (IOException | InvalidNameException | CertificateException| NoSuchAlgorithmException | InvalidKeyException |SignatureException | NoSuchProviderException e) {
+            model.addAttribute("message", "Cannot open file: " + e.getMessage());
             e.printStackTrace();
         }
 
