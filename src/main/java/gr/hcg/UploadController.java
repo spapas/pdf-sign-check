@@ -1,7 +1,6 @@
 package gr.hcg;
 
-import org.springframework.boot.*;
-import org.springframework.boot.autoconfigure.*;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -15,12 +14,15 @@ import java.security.SignatureException;
 import java.security.cert.CertificateException;
 
 @Controller
-@EnableAutoConfiguration
 public class UploadController {
+
+    @Value("${check.config}")
+    private String checkConfig;
 
     @GetMapping("/")
     public String home(Model model) {
         model.addAttribute("message", "Please upload a pdf file");
+        model.addAttribute("config", checkConfig);
         return "home";
     }
 
@@ -34,9 +36,8 @@ public class UploadController {
 
         try {
 
-            // Get the file and save it somewhere
             byte[] bytes = file.getBytes();
-            CertInfo.showSignature(bytes);
+            PDFSignatureInfoParser.getPDFSignatureInfo(bytes);
 
             model.addAttribute("message", "OK");
 
@@ -49,8 +50,6 @@ public class UploadController {
     }
 
 
-    public static void main(String[] args) throws Exception {
-        SpringApplication.run(UploadController.class, args);
-    }
+
 
 }

@@ -1,9 +1,11 @@
 <!DOCTYPE html>
+
 <html xmlns:th="http://www.thymeleaf.org">
 <body>
 
 <h1>Signed PDF check </h1>
 
+<!--/*@thymesVar id="message" type=""*/-->
 <p th:text="${message}" />
 
 <form method="POST" action="/" enctype="multipart/form-data">
@@ -11,5 +13,11 @@
     <input type="submit" value="Submit" />
 </form>
 
+<footer>
+    <!--/*@thymesVar id="config" type=""*/-->
+    <p th:text="${config}" />
+</footer>
+
 </body>
 </html>
+

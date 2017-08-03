@@ -2,19 +2,21 @@ package gr.hcg;
 
 /**
  * Created by serafeim on 13/7/2017.
+ *
+ * Original code copied from PDFBox examples:
+ *
+ * Author: Ben Litchfield
  */
 
 import java.io.*;
+import java.net.URL;
 import java.security.InvalidKeyException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import java.security.PublicKey;
 import java.security.SignatureException;
-import java.security.cert.Certificate;
-import java.security.cert.CertificateException;
-import java.security.cert.CertificateFactory;
-import java.security.cert.X509Certificate;
+import java.security.cert.*;
 import java.text.SimpleDateFormat;
 import java.util.Collection;
 
@@ -35,12 +37,8 @@ import org.bouncycastle.operator.OperatorCreationException;
 import org.bouncycastle.util.Store;
 import org.bouncycastle.util.StoreException;
 
-/**
- * This will read a document from the filesystem, decrypt it and do something with the signature.
- *
- * @author Ben Litchfield
- */
-public class CertInfo {
+
+public class PDFSignatureInfoParser {
     private static final SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss");
 
 
@@ -58,13 +56,12 @@ public class CertInfo {
      */
     public static void main(String[] args) throws IOException, CertificateException,
             NoSuchAlgorithmException, InvalidKeyException,
-            NoSuchProviderException, SignatureException
-    {
-        CertInfo show = new CertInfo();
-        show.showSignature( new FileInputStream(new File("y.pdf")));
+            NoSuchProviderException, SignatureException {
+        PDFSignatureInfoParser show = new PDFSignatureInfoParser();
+        show.getPDFSignatureInfo( new FileInputStream(new File("y.pdf")));
     }
 
-    public static byte[] getbyteArray(InputStream is) throws IOException {
+    private static byte[] getbyteArray(InputStream is) throws IOException {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
 
         byte[] buffer = new byte[1024];
@@ -76,23 +73,22 @@ public class CertInfo {
 
         return baos.toByteArray();
         //InputStream is1 = new ByteArrayInputStream(baos.toByteArray());
-        //InputStream is2 = new ByteArrayInputStream(baos.toByteArray());
-
     }
 
 
-    public static void showSignature(InputStream is ) throws IOException, CertificateException,
+    public static PDFSignatureInfo getPDFSignatureInfo(InputStream is ) throws IOException, CertificateException,
             NoSuchAlgorithmException, InvalidKeyException,
             NoSuchProviderException, SignatureException {
 
         byte[] byteArray = getbyteArray(is);
-        showSignature(byteArray);
+        return getPDFSignatureInfo(byteArray);
     }
 
-    public static void showSignature(byte[] byteArray ) throws IOException, CertificateException,
+    public static PDFSignatureInfo getPDFSignatureInfo(byte[] byteArray ) throws IOException, CertificateException,
             NoSuchAlgorithmException, InvalidKeyException,
             NoSuchProviderException, SignatureException {
 
+        PDFSignatureInfo psi = new PDFSignatureInfo();
 
         try (PDDocument document = PDDocument.load(new ByteArrayInputStream(byteArray))) {
             for (PDSignature sig : document.getSignatureDictionaries()) {
@@ -165,11 +161,11 @@ public class CertInfo {
                     throw new IOException("Missing subfilter for cert dictionary");
                 }
             }
-        }
-        catch (CMSException | OperatorCreationException ex) {
+        } catch (CMSException | OperatorCreationException ex) {
             throw new IOException(ex);
         }
 
+        return psi;
     }
 
     /**
@@ -185,8 +181,7 @@ public class CertInfo {
      */
     private static void verifyPKCS7(byte[] byteArray, COSString contents, PDSignature sig)
             throws CMSException, CertificateException, StoreException, OperatorCreationException,
-            NoSuchAlgorithmException, NoSuchProviderException
-    {
+            NoSuchAlgorithmException, NoSuchProviderException {
         // inspiration:
         // http://stackoverflow.com/a/26702631/535646
         // http://stackoverflow.com/a/9261365/535646
@@ -229,6 +224,16 @@ public class CertInfo {
         } catch (SignatureException | InvalidKeyException sigEx) {
             return false;
         }
+    }
+
+    private static boolean isRevoked(Certificate cert) throws CertificateException, IOException, CRLException {
+        CertificateFactory certFactory = CertificateFactory.getInstance("X.509");
+        String crlURLString = "http://crl.ermis.gov.gr/HPARCAPServants/LatestCRL.crl";
+        URL crlURL = new URL(crlURLString);
+        InputStream crlStream = crlURL.openStream();
+        X509CRL crl = (X509CRL)certFactory.generateCRL(crlStream);
+        return crl.isRevoked(cert);
+
     }
 
 
