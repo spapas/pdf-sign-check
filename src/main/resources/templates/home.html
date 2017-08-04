@@ -17,7 +17,7 @@
 
 <!--/*@thymesVar id="pdfSignatureInfo" type="List<PDFSignatureInfo>"*/-->
 <!--/*@thymesVar id="signature" type="PDFSignatureInfo"*/-->
-<h1>Signature info for <span th:text="${filename}" ></span></h1>
+<h1 th:if="${filename}">Signature info for <span th:text="${filename}" ></span></h1>
 <div class="signatureInfo" th:each="signature, iterationStatus: ${pdfSignatureInfo}">
     <h2>Signature #<span th:text="${iterationStatus.count}" ></span></h2>
     <h3>Info</h3>
