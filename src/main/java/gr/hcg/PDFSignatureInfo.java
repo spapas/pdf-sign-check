@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class PDFSignatureInfo {
+
     public Map<String, Object> entries = new HashMap<>();
 
     public String reason;

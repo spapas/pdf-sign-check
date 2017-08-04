@@ -157,7 +157,7 @@ public class PDFSignatureInfoParser {
                             CertificateFactory factory = CertificateFactory.getInstance("X.509");
                             ByteArrayInputStream certStream = new ByteArrayInputStream(certData);
                             Collection<? extends Certificate> certs = factory.generateCertificates(certStream);
-                            System.out.println("certs=" + certs);
+                            //System.out.println("certs=" + certs);
                             byte[] hash = MessageDigest.getInstance("SHA1").digest(buf);
                             verifyPKCS7(hash, contents, sig, psi);
 
@@ -171,7 +171,7 @@ public class PDFSignatureInfoParser {
                             CertificateFactory factory = CertificateFactory.getInstance("X.509");
                             ByteArrayInputStream certStream = new ByteArrayInputStream(certData);
                             Collection<? extends Certificate> certs = factory.generateCertificates(certStream);
-                            System.out.println("certs=" + certs);
+                            //System.out.println("certs=" + certs);
 
                             //TODO verify signature
                             psi.signatureVerified="Unable to verify adbe.x509.rsa_sha1 subfilter";
@@ -218,7 +218,7 @@ public class PDFSignatureInfoParser {
         X509CertificateHolder certificateHolder = (X509CertificateHolder) matches.iterator().next();
         X509Certificate certFromSignedData = new JcaX509CertificateConverter().getCertificate(certificateHolder);
 
-        System.out.println("certFromSignedData: " + certFromSignedData);
+        //System.out.println("certFromSignedData: " + certFromSignedData);
 
         CertificateInfo ci = new CertificateInfo();
         psi.certificateInfo = ci;

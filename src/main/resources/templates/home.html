@@ -8,13 +8,16 @@
 <!--/*@thymesVar id="message" type=""*/-->
 <p th:text="${message}" />
 
-<form method="POST" action="/" enctype="multipart/form-data">
-    <input type="file" name="file" /><br/><br/>
+<form method="POST" action="" enctype="multipart/form-data">
+    <input type="file" name="file" />
+    <Label for="json">Json output:<input id="json" type="checkbox" name="json" /></Label>
+    <br/><br/>
     <input type="submit" value="Submit" />
 </form>
 
 <!--/*@thymesVar id="pdfSignatureInfo" type="List<PDFSignatureInfo>"*/-->
 <!--/*@thymesVar id="signature" type="PDFSignatureInfo"*/-->
+<h1>Signature info for <span th:text="${filename}" ></span></h1>
 <div class="signatureInfo" th:each="signature, iterationStatus: ${pdfSignatureInfo}">
     <h2>Signature #<span th:text="${iterationStatus.count}" ></span></h2>
     <h3>Info</h3>
@@ -75,7 +78,9 @@
 
 <footer>
     <!--/*@thymesVar id="config" type=""*/-->
-    <p th:text="${config}" />
+    <!--
+        <p th:text="${config}" />
+    -->
 </footer>
 
 </body>
