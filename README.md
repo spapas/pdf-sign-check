@@ -1,13 +1,5 @@
 # pdf-sign-check
-A java / spring boot application to help you check your signed pdf documents.
-
-Using the API:
-
-curl -X POST http://172.19.130.142:8081/ -F file=@test.pdf -F json=on
-
-or with python requests:
-
-r =  requests.post('http://localhost:8081', files = {'file': file.read(), }, data={'json': 'on'} )
+A java / spring boot application to help you check your signed pdf documents. You upload the PDF file and you'll get its signing information. For more info on digital signing PDFs visit: https://developers.itextpdf.com/content/itext-7-digital-signatures-pdf
 
 ## Rationale
 
@@ -35,3 +27,18 @@ mvn spring-boot:run -DaddResources=True -Drun.addResources=True
 ```
 
 You can then visit the application at http://127.0.0.1:8081 to see the (really simple) web interface or call it through the REST API. Properties can be configured through ``src/main/resources/application.properties``.
+
+## Usage
+
+Using the API:
+
+```
+curl -X POST http://172.19.130.142:8081/ -F file=@test.pdf -F json=on
+```
+or with python requests:
+
+```
+r =  requests.post('http://localhost:8081', files = {'file': file.read(), }, data={'json': 'on'} )
+```
+
+Or just visit the site and use the web interface.
