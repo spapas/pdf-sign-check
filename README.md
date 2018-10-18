@@ -23,4 +23,15 @@ One thing that may seem strange to people not familiar with digital signatures a
 
 ## Installation
 
-This is a spring boot application thus you should follow the instructions of the spring boott project: https://docs.spring.io/spring-boot/docs/current/reference/html/deployment.html. The app doesn't have any external dependencies like databases etc, you just upload the PDF and get the response, nothing is saved or triggered.
+This is a spring boot application thus you should follow the instructions of the spring boot project: https://docs.spring.io/spring-boot/docs/current/reference/html/deployment.html. The app doesn't have any external dependencies like databases etc, you just upload the PDF and get the response, nothing is saved or triggered.
+
+
+## Runing it in development
+
+You can run the project using maven:
+
+```
+mvn spring-boot:run -DaddResources=True -Drun.addResources=True
+```
+
+You can then visit the application at http://127.0.0.1:8081 to see the (really simple) web interface or call it through the REST API. Properties can be configured through ``src/main/resources/application.properties``.
