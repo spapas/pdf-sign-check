@@ -1,5 +1,5 @@
 # pdf-sign-check
-A java / spring boot application to help you check your signed pdf documents. You upload the PDF file and you'll get its signing information. For more info on digital signing PDFs visit: https://developers.itextpdf.com/content/itext-7-digital-signatures-pdf
+A java / spring boot application to help you check your signed pdf documents. You upload the PDF file and you'll get its signing information. For more info on digital signing PDFs visit: https://developers.itextpdf.com/content/itext-7-digital-signatures-pdf. Please notice that this is a highly specialized app; if you need it you'll know it!
 
 ## Rationale
 
