@@ -8,3 +8,14 @@ curl -X POST http://172.19.130.142:8081/ -F file=@test.pdf -F json=on
 or with python requests:
 
 r =  requests.post('http://localhost:8081', files = {'file': file.read(), }, data={'json': 'on'} )
+
+## rationale
+
+The organization I work for is a heavy user of signed PDF documents mainly for verification, timestamping and non-repudiation. Actually, all the internal correspondance is done using signed PDF documents and also many internal applications use signed PDF documents confirm various actions. This application offers a REST API so that other apps can easily test if a document is properly signed or not (and get some of the details of the signature). A common workflow would be the following:
+
+1. The user does some action in an Application X
+1. The Application X generates a PDF document / receipt of that action
+1. The user downloads the PDF document and signs it using his USB key
+1. The user uploads the signed PDF document
+1. Application X uses this project (pdf-sign-check) to make sure that the uploaded document is properly signed and has the correct details (for example signed by the correct user, some documents may need more than one signature etc)
+
