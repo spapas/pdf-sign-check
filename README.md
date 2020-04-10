@@ -17,13 +17,26 @@ One thing that may seem strange to people not familiar with digital signatures a
 
 This is a spring boot application thus you should follow the instructions of the spring boot project: https://docs.spring.io/spring-boot/docs/current/reference/html/deployment.html. The app doesn't have any external dependencies like databases etc, you just upload the PDF and get the response, nothing is saved or triggered.
 
+You can configure the listening port and the max file size using `src/main/resourecs/application.properties` (or by
+overriding these properties f.e like proposed here: https://spapas.github.io/2016/03/31/spring-boot-settings/).
+
+We run this in production using the integration with init services in linux as proposed here: https://docs.spring.io/spring-boot/docs/current/reference/html/deployment.html#deployment-install.
+You can create a standalone runnable `.jar` (just use `package.bat`) and copy it to the prod server. Then just create a soflink from
+/etc/init.d/signcheck -> to your jar. You should then be able to run it as an .sh script for example:
+
+```
+[serafeim@prod ~]$ /etc/init.d/signcheck
+Usage: /etc/init.d/signcheck {start|stop|force-stop|restart|force-reload|status|run}
+```  
+
+Activate it to autorun on boot using the proper tool (f.e `chkconfig` on Centos).
 
 ## Runing it in development
 
 You can run the project using maven:
 
 ```
-mvn spring-boot:run -DaddResources=True -Drun.addResources=True
+mvn spring-boot:run -DaddResources=True
 ```
 
 You can then visit the application at http://127.0.0.1:8081 to see the (really simple) web interface or call it through the REST API. Properties can be configured through ``src/main/resources/application.properties``.
