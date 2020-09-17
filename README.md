@@ -31,7 +31,7 @@ Usage: /etc/init.d/signcheck {start|stop|force-stop|restart|force-reload|status|
 
 Activate it to autorun on boot using the proper tool (f.e `chkconfig` on Centos).
 
-## Runing it in development
+## Running it in development
 
 You can run the project using maven:
 
