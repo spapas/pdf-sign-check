@@ -1,6 +1,9 @@
 <!DOCTYPE html>
 
 <html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+</head>
 <body>
 
 <h1>Signed PDF check </h1>
@@ -39,7 +42,7 @@
     <ul>
         <li th:each="entry: ${signature.entries}">
             <span th:text="${entry.key}" ></span>:
-            <span th:text="${entry.value}" ></span>
+            <span th:text="${entry.value.toString()}" ></span>
         </li>
     </ul>
 

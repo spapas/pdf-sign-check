@@ -17,6 +17,8 @@ import java.security.NoSuchProviderException;
 import java.security.SignatureException;
 import java.security.cert.CertificateException;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 @Controller
 public class UploadController {
@@ -50,7 +52,7 @@ public class UploadController {
             model.addAttribute("message", "OK");
             model.addAttribute("filename", file.getOriginalFilename());
             model.addAttribute("pdfSignatureInfo", info);
-
+            
         } catch (IOException | InvalidNameException | CertificateException| NoSuchAlgorithmException | InvalidKeyException |SignatureException | NoSuchProviderException e) {
             model.addAttribute("message", "Cannot open file: " + e.getMessage());
             e.printStackTrace();
