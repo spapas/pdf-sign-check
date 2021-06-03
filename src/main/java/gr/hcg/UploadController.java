@@ -52,7 +52,7 @@ public class UploadController {
             model.addAttribute("message", "OK");
             model.addAttribute("filename", file.getOriginalFilename());
             model.addAttribute("pdfSignatureInfo", info);
-            
+
         } catch (IOException | InvalidNameException | CertificateException| NoSuchAlgorithmException | InvalidKeyException |SignatureException | NoSuchProviderException e) {
             model.addAttribute("message", "Cannot open file: " + e.getMessage());
             e.printStackTrace();

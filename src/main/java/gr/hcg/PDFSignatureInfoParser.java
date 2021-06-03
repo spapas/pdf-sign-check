@@ -146,6 +146,7 @@ public class PDFSignatureInfoParser {
                 if (subFilter != null) {
                     switch (subFilter) {
                         case "adbe.pkcs7.detached":
+                        case "ETSI.CAdES.detached":
                             verifyPKCS7(buf, contents, sig, psi);
 
                             //TODO check certificate chain, revocation lists, timestamp...
@@ -176,6 +177,7 @@ public class PDFSignatureInfoParser {
                             //TODO verify signature
                             psi.signatureVerified="Unable to verify adbe.x509.rsa_sha1 subfilter";
                             break;
+
                         }
                         default:
                             throw new IOException("Unknown certificate type " + subFilter);
