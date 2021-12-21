@@ -13,15 +13,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
-import javax.naming.InvalidNameException;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.security.InvalidKeyException;
-import java.security.NoSuchAlgorithmException;
-import java.security.NoSuchProviderException;
-import java.security.SignatureException;
-import java.security.cert.CertificateException;
-import java.util.List;
+
 
 @Controller
 public class SignController {
@@ -33,7 +27,6 @@ public class SignController {
     public ModelAndView home(Model model) {
         model.addAttribute("message", "Please upload a pdf file to sign");
         model.addAttribute("config", checkConfig);
-
         return new ModelAndView("sign", model.asMap());
 
     }
@@ -63,7 +56,7 @@ public class SignController {
             return  new ResponseEntity<>(bytes, headers, HttpStatus.OK);
 
         } catch (IOException e) {
-            model.addAttribute("message", "Error!");
+            model.addAttribute("message", "General error!");
             e.printStackTrace();
             return "sign";
         }
