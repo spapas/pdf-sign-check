@@ -21,7 +21,7 @@ import java.util.Map;
 import java.util.Set;
 
 @Controller
-public class UploadController {
+public class CheckSignatureController {
 
     @Value("${check.config}")
     private String checkConfig;
