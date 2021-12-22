@@ -2,7 +2,7 @@
 A java/spring boot application to help you *sign* and *check* your signed pdf documents. 
 For checking, you upload the PDF file and you'll get its signing information.
 For signing, you upload the PDF file along with some parameters for the signature and
-you'll get a digitally signed PDF (you need a proper certificate to use this feature).
+you'll get a digitally signed PDF (you need a proper certificate in a keystore to use this feature).
 For more info on digital signing PDFs visit: https://developers.itextpdf.com/content/itext-7-digital-signatures-pdf. Please notice that this is a highly specialized app; if you need it, you'll know it!
 
 ## Rationale for checks
