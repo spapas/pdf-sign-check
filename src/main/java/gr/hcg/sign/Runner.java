@@ -1,3 +1,4 @@
+/*
 package gr.hcg.sign;
 
 import org.slf4j.LoggerFactory;
@@ -37,3 +38,4 @@ public class Runner implements CommandLineRunner {
         //signer.sign(new FileInputStream(documentFile), new FileOutputStream(signedDocumentFile), null, null, null, null, null);
     }
 }
+*/

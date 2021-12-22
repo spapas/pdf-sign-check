@@ -89,4 +89,6 @@ tags
 .vscode/
 
 src/main/resources/*.p12
+src/main/resources/*.jks
 *.p12
+*.jks
