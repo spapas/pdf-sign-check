@@ -1,5 +1,10 @@
 package gr.hcg.sign;
 
+import com.google.zxing.BarcodeFormat;
+import com.google.zxing.MultiFormatWriter;
+import com.google.zxing.WriterException;
+import com.google.zxing.client.j2se.MatrixToImageWriter;
+import com.google.zxing.common.BitMatrix;
 import org.apache.pdfbox.cos.COSName;
 import org.apache.pdfbox.io.IOUtils;
 import org.apache.pdfbox.io.RandomAccessFile;
@@ -41,6 +46,7 @@ import java.security.UnrecoverableKeyException;
 import java.security.cert.CertificateException;
 import java.util.Calendar;
 import java.util.List;
+import java.util.Map;
 
 /**
  * This is a second example for visual signing a pdf. It doesn't use the "design pattern" influenced
@@ -64,6 +70,7 @@ public class CreateVisibleSignatureMem extends CreateSignatureBase
     public String signatureReason = "IDENTICAL COPY";
     public String visibleLine1 = "DIGITALLY SIGNED";
     public String visibleLine2 = "MMAIP";
+    public String qrcode = null;
 
 
     /**
@@ -94,20 +101,6 @@ public class CreateVisibleSignatureMem extends CreateSignatureBase
         this.imageBytes = imageBytes;
     }
 
-
-    /**
-     * Sign pdf file and create new file that ends with "_signed.pdf".
-     *
-     * @param inputFile The source pdf document file.
-     * @param signedFile The file to be signed.
-     * @param humanRect rectangle from a human viewpoint (coordinates start at top left)
-     * @param tsaUrl optional TSA url
-     * @throws IOException
-     */
-    public void signPDF(File inputFile, File signedFile, Rectangle2D humanRect, String tsaUrl) throws IOException
-    {
-        //this.signPDF(inputFile, signedFile, humanRect, tsaUrl, null);
-    }
 
     /**
      * Sign pdf file and create new file that ends with "_signed.pdf".
@@ -264,6 +257,16 @@ public class CreateVisibleSignatureMem extends CreateSignatureBase
         return rect;
     }
 
+    public static byte[] generateQRcode(String data, int h, int w) throws IOException, WriterException {
+//the BitMatrix class represents the 2D matrix of bits
+//MultiFormatWriter is a factory class that finds the appropriate Writer subclass for the BarcodeFormat requested and encodes the barcode with the supplied contents.
+        BitMatrix matrix = new MultiFormatWriter().encode(new String(data.getBytes("utf-8"), "utf-8"), BarcodeFormat.QR_CODE, w, h);
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        MatrixToImageWriter.writeToStream(matrix, "png", bos);
+        //MatrixToImageWriter.writeToFile(matrix, path.substring(path.lastIndexOf('.') + 1), new File(path));
+        return bos.toByteArray();
+    }
+
     // create a template PDF document with empty signature and return it as a stream.
     private InputStream createVisualSignatureTemplate(PDDocument srcDoc, int pageNum, PDRectangle rect) throws IOException
     {
@@ -342,10 +345,22 @@ public class CreateVisibleSignatureMem extends CreateSignatureBase
                 // show background image
                 // save and restore graphics if the image is too large and needs to be scaled
                 cs.saveGraphicsState();
+
                 cs.transform(Matrix.getScaleInstance(0.5f, 0.5f));
-                //PDImageXObject img = PDImageXObject.createFromFileByExtension(imageFile, doc);
-                PDImageXObject img = PDImageXObject.createFromByteArray(doc, imageBytes, null);
-                cs.drawImage(img, 200, 0);
+
+                if(qrcode==null || qrcode.equals("")) {
+                    PDImageXObject img = PDImageXObject.createFromByteArray(doc, imageBytes, null);
+                    cs.drawImage(img, 200, 0);
+                } else {
+                    try {
+                        byte[] qrbytes = generateQRcode(qrcode, 75, 75);
+                        PDImageXObject qrimg = PDImageXObject.createFromByteArray(doc, qrbytes, null);
+                        cs.drawImage(qrimg, 200, 0);
+                    } catch(WriterException e) {
+                        e.printStackTrace();
+                    }
+                }
+
                 cs.restoreGraphicsState();
 
                 // show text

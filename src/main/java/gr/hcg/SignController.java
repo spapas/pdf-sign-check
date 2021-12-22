@@ -56,6 +56,7 @@ public class SignController {
                                    @RequestParam(value = "signLocation") Optional<String> signLocation,
                                    @RequestParam(value = "visibleLine1") Optional<String> visibleLine1,
                                    @RequestParam(value = "visibleLine2") Optional<String> visibleLine2,
+                                   @RequestParam(value = "qrcode") Optional<String> qrcode,
                                    HttpServletResponse response ) {
 
         if (file.isEmpty()) {
@@ -70,12 +71,10 @@ public class SignController {
 
         try {
             ByteArrayOutputStream bos = new ByteArrayOutputStream();
-            signer.sign(file.getInputStream(), bos, signName.orElse(null), signLocation.orElse(null), signReason.orElse(null), visibleLine1.orElse(null), visibleLine2.orElse(null));
+            signer.sign(file.getInputStream(), bos, signName.orElse(null), signLocation.orElse(null), signReason.orElse(null), visibleLine1.orElse(null), visibleLine2.orElse(null), qrcode.orElse(null));
 
             final HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_PDF);
-
-
             return  new ResponseEntity<>(bos.toByteArray(), headers, HttpStatus.OK);
 
         } catch (IOException | KeyStoreException | CertificateException | NoSuchAlgorithmException | UnrecoverableKeyException e) {
