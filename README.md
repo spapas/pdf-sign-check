@@ -2,7 +2,7 @@
 A java/spring boot application to help you *sign* and *check* your signed pdf documents. 
 For checking, you upload the PDF file and you'll get its signing information.
 For signing, you upload the PDF file along with some parameters for the signature and
-you'll get a digitally signed PDF (you need a proper certificate to use this feature).
+you'll get a digitally signed PDF (you need a proper certificate in a keystore to use this feature).
 For more info on digital signing PDFs visit: https://developers.itextpdf.com/content/itext-7-digital-signatures-pdf. Please notice that this is a highly specialized app; if you need it, you'll know it!
 
 ## Rationale for checks
@@ -90,7 +90,7 @@ Or just visit the site and use the web interface.
 Using the API:
 
 ```
-curl -X POST  -H "Content-Type: multipart/form-data; charset=iso-8859-7"   -F file=@..\test.pdf -F apikey=123  -F "visibleLine1=Digitally signed" -F "visibleLine2="MMAIP" -F "signName=MMAIP" -F "signReason=Identical Copy" -F "signLocation=Piraeus"  http://127.0.0.1:8081/sign --output koko.pdf
+curl -X POST -F file=@..\test.pdf -F apikey=123  -F "visibleLine1=Digitally signed" -F "visibleLine2="MMAIP" -F "signName=MMAIP" -F "signReason=Identical Copy" -F "signLocation=Piraeus"  http://127.0.0.1:8081/sign --output koko.pdf
 ```
 or with python requests:
 
@@ -100,7 +100,4 @@ pdf_content = requests.post('http://localhost:8081/sign', files = {'file': open(
 
 ## Security
 
-Please notice that checking pdf files is allowed by everybody. However, for  
-signing you need to set a **very strong api key and be very careful about it.** If somebody
-gets your api key he'll be able to sign *any document* he wants with your organization's
-signature!
+Please notice that checking pdf files is allowed by everybody. However, for signing you need to set a **very strong api key and be very careful about it.** If somebody gets your api key he'll be able to sign *any document* he wants with your organization's signature!
