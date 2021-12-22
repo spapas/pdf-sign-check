@@ -334,7 +334,7 @@ public class CreateVisibleSignatureMem extends CreateSignatureBase
                 }
 
                 // show background (just for debugging, to see the rect size + position)
-                cs.setNonStrokingColor(Color.lightGray);
+                cs.setNonStrokingColor(new Color(.9f,.9f,.9f));
                 cs.addRect(-5000, -5000, 10000, 10000);
                 cs.fill();
 

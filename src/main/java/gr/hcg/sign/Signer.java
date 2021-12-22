@@ -21,6 +21,9 @@ public class Signer {
     @Value("${signer.keystore.name}")
     public String keystoreName;
 
+    @Value("${signer.image.name}")
+    public String imageName;
+
     @Value("${signer.tsaurl}")
     public String tsaUrl;
 
@@ -60,7 +63,7 @@ public class Signer {
 
     public void sign(InputStream is, OutputStream os, String signName, String signLocation, String signReason, String visibleLine1, String visibleLine2) throws KeyStoreException, CertificateException, IOException, NoSuchAlgorithmException, UnrecoverableKeyException {
 
-        InputStream ksInputStream = CreateVisibleSignatureMem.class.getClassLoader().getResourceAsStream(keystoreName);
+        InputStream ksInputStream = new FileInputStream(keystoreName);
 
         KeyStore keystore = KeyStore.getInstance("PKCS12");
         char[] pin = keystorePin.toCharArray();
@@ -69,7 +72,7 @@ public class Signer {
         CreateVisibleSignatureMem signing = new CreateVisibleSignatureMem(keystore, pin.clone());
         setIfNotNull(signing, signName, signLocation, signReason, visibleLine1, visibleLine2);
 
-        InputStream imageResource = CreateVisibleSignatureMem.class.getClassLoader().getResourceAsStream("hcg.png");
+        InputStream imageResource = new FileInputStream(imageName);
         signing.setImageBytes(readBytes(imageResource));
 
         // Set the signature rectangle top - left - width - height

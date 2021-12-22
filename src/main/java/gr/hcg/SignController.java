@@ -24,6 +24,7 @@ import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.UnrecoverableKeyException;
 import java.security.cert.CertificateException;
+import java.util.Optional;
 
 
 @Controller
@@ -31,6 +32,9 @@ public class SignController {
 
     @Value("${check.config}")
     private String checkConfig;
+
+    @Value("${signer.apikey}")
+    private String signerapikey;
 
     @Autowired
     Signer signer;
@@ -47,11 +51,11 @@ public class SignController {
     public Object singleFileUpload(Model model,
                                    @RequestParam("file") MultipartFile file,
                                    @RequestParam(value = "apikey") String apikey,
-                                   @RequestParam(value = "signName") String signName,
-                                   @RequestParam(value = "signReason") String signReason,
-                                   @RequestParam(value = "signLocation") String signLocation,
-                                   @RequestParam(value = "visibleLine1") String visibleLine1,
-                                   @RequestParam(value = "visibleLine2") String visibleLine2,
+                                   @RequestParam(value = "signName") Optional<String> signName,
+                                   @RequestParam(value = "signReason") Optional<String> signReason,
+                                   @RequestParam(value = "signLocation") Optional<String> signLocation,
+                                   @RequestParam(value = "visibleLine1") Optional<String> visibleLine1,
+                                   @RequestParam(value = "visibleLine2") Optional<String> visibleLine2,
                                    HttpServletResponse response ) {
 
         if (file.isEmpty()) {
@@ -59,14 +63,14 @@ public class SignController {
             return "sign";
         }
 
-        if(!apikey.equals("123")) {
+        if(!apikey.equals(signerapikey)) {
             model.addAttribute("message", "Wrong api key");
             return "sign";
         }
 
         try {
             ByteArrayOutputStream bos = new ByteArrayOutputStream();
-            signer.sign(file.getInputStream(), bos, signName, signLocation,signReason,visibleLine1,visibleLine2);
+            signer.sign(file.getInputStream(), bos, signName.orElse(null), signLocation.orElse(null), signReason.orElse(null), visibleLine1.orElse(null), visibleLine2.orElse(null));
 
             final HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_PDF);

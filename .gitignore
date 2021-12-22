@@ -89,3 +89,4 @@ tags
 .vscode/
 
 src/main/resources/*.p12
+*.p12
