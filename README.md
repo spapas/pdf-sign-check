@@ -90,7 +90,7 @@ Or just visit the site and use the web interface.
 Using the API:
 
 ```
-curl -X POST  -H "Content-Type: multipart/form-data; charset=iso-8859-7"   -F file=@..\test.pdf -F apikey=123  -F "visibleLine1=Digitally signed" -F "visibleLine2="MMAIP" -F "signName=MMAIP" -F "signReason=Identical Copy" -F "signLocation=Piraeus"  http://127.0.0.1:8081/sign --output koko.pdf
+curl -X POST -F file=@..\test.pdf -F apikey=123  -F "visibleLine1=Digitally signed" -F "visibleLine2="MMAIP" -F "signName=MMAIP" -F "signReason=Identical Copy" -F "signLocation=Piraeus"  http://127.0.0.1:8081/sign --output koko.pdf
 ```
 or with python requests:
 
