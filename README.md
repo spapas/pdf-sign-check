@@ -100,7 +100,4 @@ pdf_content = requests.post('http://localhost:8081/sign', files = {'file': open(
 
 ## Security
 
-Please notice that checking pdf files is allowed by everybody. However, for  
-signing you need to set a **very strong api key and be very careful about it.** If somebody
-gets your api key he'll be able to sign *any document* he wants with your organization's
-signature!
+Please notice that checking pdf files is allowed by everybody. However, for signing you need to set a **very strong api key and be very careful about it.** If somebody gets your api key he'll be able to sign *any document* he wants with your organization's signature!
