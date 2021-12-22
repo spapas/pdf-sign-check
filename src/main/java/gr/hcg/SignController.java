@@ -1,5 +1,7 @@
 package gr.hcg;
 
+import gr.hcg.sign.Signer;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
@@ -14,7 +16,14 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletResponse;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
+import java.security.UnrecoverableKeyException;
+import java.security.cert.CertificateException;
 
 
 @Controller
@@ -22,6 +31,9 @@ public class SignController {
 
     @Value("${check.config}")
     private String checkConfig;
+
+    @Autowired
+    Signer signer;
 
     @GetMapping("/sign")
     public ModelAndView home(Model model) {
@@ -35,6 +47,11 @@ public class SignController {
     public Object singleFileUpload(Model model,
                                    @RequestParam("file") MultipartFile file,
                                    @RequestParam(value = "apikey") String apikey,
+                                   @RequestParam(value = "signName") String signName,
+                                   @RequestParam(value = "signReason") String signReason,
+                                   @RequestParam(value = "signLocation") String signLocation,
+                                   @RequestParam(value = "visibleLine1") String visibleLine1,
+                                   @RequestParam(value = "visibleLine2") String visibleLine2,
                                    HttpServletResponse response ) {
 
         if (file.isEmpty()) {
@@ -48,14 +65,16 @@ public class SignController {
         }
 
         try {
+            ByteArrayOutputStream bos = new ByteArrayOutputStream();
+            signer.sign(file.getInputStream(), bos, signName, signLocation,signReason,visibleLine1,visibleLine2);
 
-            byte[] bytes = file.getBytes();
             final HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_PDF);
 
-            return  new ResponseEntity<>(bytes, headers, HttpStatus.OK);
 
-        } catch (IOException e) {
+            return  new ResponseEntity<>(bos.toByteArray(), headers, HttpStatus.OK);
+
+        } catch (IOException | KeyStoreException | CertificateException | NoSuchAlgorithmException | UnrecoverableKeyException e) {
             model.addAttribute("message", "General error!");
             e.printStackTrace();
             return "sign";

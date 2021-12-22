@@ -1,6 +1,5 @@
 package gr.hcg.sign;
 
-import org.apache.pdfbox.cos.COSBase;
 import org.apache.pdfbox.cos.COSName;
 import org.apache.pdfbox.io.IOUtils;
 import org.apache.pdfbox.io.RandomAccessFile;
@@ -11,11 +10,7 @@ import org.apache.pdfbox.pdmodel.PDResources;
 import org.apache.pdfbox.pdmodel.common.PDRectangle;
 import org.apache.pdfbox.pdmodel.common.PDStream;
 import org.apache.pdfbox.pdmodel.font.PDFont;
-import org.apache.pdfbox.pdmodel.font.PDTrueTypeFont;
 import org.apache.pdfbox.pdmodel.font.PDType0Font;
-import org.apache.pdfbox.pdmodel.font.PDType1Font;
-import org.apache.pdfbox.pdmodel.font.encoding.Encoding;
-import org.apache.pdfbox.pdmodel.font.encoding.Type1Encoding;
 import org.apache.pdfbox.pdmodel.graphics.form.PDFormXObject;
 import org.apache.pdfbox.pdmodel.graphics.image.PDImageXObject;
 import org.apache.pdfbox.pdmodel.interactive.annotation.PDAnnotationWidget;
@@ -30,6 +25,9 @@ import org.apache.pdfbox.pdmodel.interactive.form.PDField;
 import org.apache.pdfbox.pdmodel.interactive.form.PDSignatureField;
 import org.apache.pdfbox.util.Hex;
 import org.apache.pdfbox.util.Matrix;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Bean;
+import org.springframework.stereotype.Component;
 
 import java.awt.*;
 import java.awt.geom.AffineTransform;
@@ -54,11 +52,18 @@ import java.util.List;
  * @author Vakhtang Koroghlishvili
  * @author Tilman Hausherr
  */
-public class CreateVisibleSignature2 extends CreateSignatureBase
+
+public class CreateVisibleSignatureMem extends CreateSignatureBase
 {
     private SignatureOptions signatureOptions;
-    private boolean lateExternalSigning = false;
-    private File imageFile;
+    private byte[] imageBytes;
+
+    public String signatureName = "AUTO SIGNATURE";
+    public String signatureLocation = "PIRAEUS, GREECE";
+    public String signatureReason = "IDENTICAL COPY";
+    public String visibleLine1 = "DIGITALLY SIGNED";
+    public String visibleLine2 = "MMAIP";
+
 
     /**
      * Initialize the signature creator with a keystore (pkcs12) and pin that
@@ -72,38 +77,22 @@ public class CreateVisibleSignature2 extends CreateSignatureBase
      * @throws CertificateException if the certificate is not valid as signing time
      * @throws IOException if no certificate could be found
      */
-    public CreateVisibleSignature2(KeyStore keystore, char[] pin)
+    public CreateVisibleSignatureMem(KeyStore keystore, char[] pin)
             throws KeyStoreException, UnrecoverableKeyException, NoSuchAlgorithmException, IOException, CertificateException
     {
         super(keystore, pin);
     }
 
-    public File getImageFile()
+    public byte[] getImageBytes()
     {
-        return imageFile;
+        return imageBytes;
     }
 
-    public void setImageFile(File imageFile)
+    public void setImageBytes(byte[] imageBytes)
     {
-        this.imageFile = imageFile;
+        this.imageBytes = imageBytes;
     }
 
-    public boolean isLateExternalSigning()
-    {
-        return lateExternalSigning;
-    }
-
-    /**
-     * Set late external signing. Enable this if you want to activate the demo code where the
-     * signature is kept and added in an extra step without using PDFBox methods. This is disabled
-     * by default.
-     *
-     * @param lateExternalSigning
-     */
-    public void setLateExternalSigning(boolean lateExternalSigning)
-    {
-        this.lateExternalSigning = lateExternalSigning;
-    }
 
     /**
      * Sign pdf file and create new file that ends with "_signed.pdf".
@@ -116,32 +105,24 @@ public class CreateVisibleSignature2 extends CreateSignatureBase
      */
     public void signPDF(File inputFile, File signedFile, Rectangle2D humanRect, String tsaUrl) throws IOException
     {
-        this.signPDF(inputFile, signedFile, humanRect, tsaUrl, null);
+        //this.signPDF(inputFile, signedFile, humanRect, tsaUrl, null);
     }
 
     /**
      * Sign pdf file and create new file that ends with "_signed.pdf".
      *
-     * @param inputFile The source pdf document file.
-     * @param signedFile The file to be signed.
+     * @param inputStream The source pdf document file.
+     * @param signedStream The file to be signed.
      * @param humanRect rectangle from a human viewpoint (coordinates start at top left)
      * @param tsaUrl optional TSA url
      * @param signatureFieldName optional name of an existing (unsigned) signature field
      * @throws IOException
      */
-    public void signPDF(File inputFile, File signedFile, Rectangle2D humanRect, String tsaUrl, String signatureFieldName) throws IOException
+    public void signPDF(InputStream inputStream, OutputStream signedStream, Rectangle2D humanRect, String tsaUrl, String signatureFieldName) throws IOException
     {
-        if (inputFile == null || !inputFile.exists())
-        {
-            throw new IOException("Document for signing does not exist");
-        }
-
         setTsaUrl(tsaUrl);
 
-        // creating output document and prepare the IO streams.
-        FileOutputStream fos = new FileOutputStream(signedFile);
-
-        try (PDDocument doc = PDDocument.load(inputFile))
+        try (PDDocument doc = PDDocument.load(inputStream))
         {
             int accessPermissions = SigUtils.getMDPPermission(doc);
             if (accessPermissions == 1)
@@ -211,9 +192,9 @@ public class CreateVisibleSignature2 extends CreateSignatureBase
             // subfilter for basic and PAdES Part 2 signatures
             signature.setSubFilter(PDSignature.SUBFILTER_ADBE_PKCS7_DETACHED);
 
-            signature.setName("Name");
-            signature.setLocation("Location");
-            signature.setReason("Reason");
+            signature.setName(this.signatureName);
+            signature.setLocation(this.signatureLocation);
+            signature.setReason(this.signatureReason);
 
             // the signing date, needed for valid signature
             signature.setSignDate(Calendar.getInstance());
@@ -228,48 +209,9 @@ public class CreateVisibleSignature2 extends CreateSignatureBase
             signatureOptions.setPage(0);
             doc.addSignature(signature, signatureInterface, signatureOptions);
 
-            if (isExternalSigning())
-            {
-                System.out.println("Signing externally " + signedFile.getName());
-                ExternalSigningSupport externalSigning = doc.saveIncrementalForExternalSigning(fos);
-                // invoke external signature service
-                byte[] cmsSignature = sign(externalSigning.getContent());
+            // write incremental (only for signing purpose)
+            doc.saveIncremental(signedStream);
 
-                // Explanation of late external signing (off by default):
-                // If you want to add the signature in a separate step, then set an empty byte array
-                // and call signature.getByteRange() and remember the offset signature.getByteRange()[1]+1.
-                // you can write the ascii hex signature at a later time even if you don't have this
-                // PDDocument object anymore, with classic java file random access methods.
-                // If you can't remember the offset value from ByteRange because your context has changed,
-                // then open the file with PDFBox, find the field with findExistingSignature() or
-                // PODDocument.getLastSignatureDictionary() and get the ByteRange from there.
-                // Close the file and then write the signature as explained earlier in this comment.
-                if (isLateExternalSigning())
-                {
-                    // this saves the file with a 0 signature
-                    externalSigning.setSignature(new byte[0]);
-
-                    // remember the offset (add 1 because of "<")
-                    int offset = signature.getByteRange()[1] + 1;
-
-                    // now write the signature at the correct offset without any PDFBox methods
-                    try (RandomAccessFile raf = new RandomAccessFile(signedFile, "rw"))
-                    {
-                        raf.seek(offset);
-                        raf.write(Hex.getBytes(cmsSignature));
-                    }
-                }
-                else
-                {
-                    // set signature bytes received from the service and save the file
-                    externalSigning.setSignature(cmsSignature);
-                }
-            }
-            else
-            {
-                // write incremental (only for signing purpose)
-                doc.saveIncremental(fos);
-            }
         }
 
         // Do not close signatureOptions before saving, because some COSStream objects within
@@ -371,7 +313,8 @@ public class CreateVisibleSignature2 extends CreateSignatureBase
             form.setBBox(bbox);
             //PDFont font = PDType1Font.HELVETICA_BOLD;
 
-            PDFont font = PDType0Font.load(doc, new File("../calibri.ttf"));
+            InputStream fontInputStream = CreateVisibleSignatureMem.class.getClassLoader().getResourceAsStream("calibri.ttf");
+            PDFont font = PDType0Font.load(doc, fontInputStream);
 
             // from PDVisualSigBuilder.createAppearanceDictionary()
             PDAppearanceDictionary appearance = new PDAppearanceDictionary();
@@ -399,7 +342,8 @@ public class CreateVisibleSignature2 extends CreateSignatureBase
                 // save and restore graphics if the image is too large and needs to be scaled
                 cs.saveGraphicsState();
                 cs.transform(Matrix.getScaleInstance(0.5f, 0.5f));
-                PDImageXObject img = PDImageXObject.createFromFileByExtension(imageFile, doc);
+                //PDImageXObject img = PDImageXObject.createFromFileByExtension(imageFile, doc);
+                PDImageXObject img = PDImageXObject.createFromByteArray(doc, imageBytes, null);
                 cs.drawImage(img, 200, 0);
                 cs.restoreGraphicsState();
 
@@ -411,9 +355,9 @@ public class CreateVisibleSignature2 extends CreateSignatureBase
                 cs.setNonStrokingColor(Color.black);
                 cs.newLineAtOffset(fontSize, height - leading);
                 cs.setLeading(leading);
-                cs.showText("ΨΗΦΙΑΚΑ ΥΠΟΓΕΓΡΑΜΜΕΝΟ");
+                cs.showText(this.visibleLine1);
                 cs.newLine();
-                cs.showText("ΑΛΣ-ΛΣ ΕΛΑΚΤ");
+                cs.showText(this.visibleLine2);
                 cs.endText();
             }
 
@@ -454,92 +398,7 @@ public class CreateVisibleSignature2 extends CreateSignatureBase
         return signature;
     }
 
-    /**
-     * Arguments are
-     * [0] key store
-     * [1] pin
-     * [2] document that will be signed
-     * [3] image of visible signature
-     *
-     * @param args
-     * @throws java.security.KeyStoreException
-     * @throws java.security.cert.CertificateException
-     * @throws java.io.IOException
-     * @throws java.security.NoSuchAlgorithmException
-     * @throws java.security.UnrecoverableKeyException
-     */
-    public static void main(String[] args) throws KeyStoreException, CertificateException,
-            IOException, NoSuchAlgorithmException, UnrecoverableKeyException
-    {
-        // generate with
-        // keytool -storepass 123456 -storetype PKCS12 -keystore file.p12 -genkey -alias client -keyalg RSA
-        if (args.length < 4)
-        {
-            usage();
-            System.exit(1);
-        }
 
-        String tsaUrl = null;
-        // External signing is needed if you are using an external signing service, e.g. to sign
-        // several files at once.
-        boolean externalSig = false;
-        for (int i = 0; i < args.length; i++)
-        {
-            if (args[i].equals("-tsa"))
-            {
-                i++;
-                if (i >= args.length)
-                {
-                    usage();
-                    System.exit(1);
-                }
-                tsaUrl = args[i];
-            }
-            if (args[i].equals("-e"))
-            {
-                externalSig = true;
-            }
-        }
-
-        File ksFile = new File(args[0]);
-        KeyStore keystore = KeyStore.getInstance("PKCS12");
-        char[] pin = args[1].toCharArray();
-        keystore.load(new FileInputStream(ksFile), pin);
-
-        File documentFile = new File(args[2]);
-
-        CreateVisibleSignature2 signing = new CreateVisibleSignature2(keystore, pin.clone());
-
-        signing.setImageFile(new File(args[3]));
-
-        File signedDocumentFile;
-        String name = documentFile.getName();
-        String substring = name.substring(0, name.lastIndexOf('.'));
-        signedDocumentFile = new File(documentFile.getParent(), substring + "_signed.pdf");
-
-        signing.setExternalSigning(externalSig);
-
-        // Set the signature rectangle
-        // Although PDF coordinates start from the bottom, humans start from the top.
-        // So a human would want to position a signature (x,y) units from the
-        // top left of the displayed page, and the field has a horizontal width and a vertical height
-        // regardless of page rotation.
-        Rectangle2D humanRect = new Rectangle2D.Float(5, 5, 150, 40);
-
-        signing.signPDF(documentFile, signedDocumentFile, humanRect, tsaUrl, "Signature1");
-    }
-
-    /**
-     * This will print the usage for this program.
-     */
-    private static void usage()
-    {
-        System.err.println("Usage: java " + CreateVisibleSignature2.class.getName()
-                + " <pkcs12-keystore-file> <pin> <input-pdf> <sign-image>\n" + "" +
-                "options:\n" +
-                "  -tsa <url>    sign timestamp using the given TSA server\n"+
-                "  -e            sign using external signature creation scenario");
-    }
 
 
 

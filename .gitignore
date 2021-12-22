@@ -87,3 +87,5 @@ hsk9eea.iml
 .settings/
 tags
 .vscode/
+
+src/main/resources/*.p12
