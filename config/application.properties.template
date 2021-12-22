@@ -1,0 +1,5 @@
+signer.keystore.pin=123
+signer.keystore.name=keystore.jks
+signer.image.name=hcg.png
+signer.tsaurl=https://timestamp.aped.gov.gr/qtss
+signer.apikey=123
