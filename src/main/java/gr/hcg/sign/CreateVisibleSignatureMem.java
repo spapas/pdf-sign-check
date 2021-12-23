@@ -250,8 +250,10 @@ public class CreateVisibleSignatureMem extends CreateSignatureBase
             default:
                 rect.setLowerLeftX(x);
                 rect.setUpperRightX(x + width);
-                rect.setLowerLeftY(pageRect.getHeight() - y - height);
-                rect.setUpperRightY(pageRect.getHeight() - y);
+                //rect.setLowerLeftY(pageRect.getHeight() - y - height);
+                //rect.setUpperRightY(pageRect.getHeight() - y);
+                rect.setLowerLeftY(y);
+                rect.setUpperRightY(y + height);
                 break;
         }
         return rect;
@@ -350,12 +352,12 @@ public class CreateVisibleSignatureMem extends CreateSignatureBase
 
                 if(qrcode==null || qrcode.equals("")) {
                     PDImageXObject img = PDImageXObject.createFromByteArray(doc, imageBytes, null);
-                    cs.drawImage(img, 200, 0);
+                    cs.drawImage(img, 300, 0);
                 } else {
                     try {
-                        byte[] qrbytes = generateQRcode(qrcode, 75, 75);
+                        byte[] qrbytes = generateQRcode(qrcode, 120, 120);
                         PDImageXObject qrimg = PDImageXObject.createFromByteArray(doc, qrbytes, null);
-                        cs.drawImage(qrimg, 200, 0);
+                        cs.drawImage(qrimg, 300, 0);
                     } catch(WriterException e) {
                         e.printStackTrace();
                     }

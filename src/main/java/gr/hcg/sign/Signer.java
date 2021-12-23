@@ -79,7 +79,7 @@ public class Signer {
         signing.setImageBytes(readBytes(imageResource));
 
         // Set the signature rectangle top - left - width - height
-        Rectangle2D humanRect = new Rectangle2D.Float(0, 0, 200, 40);
+        Rectangle2D humanRect = new Rectangle2D.Float(0, 0, 200, 60);
 
         signing.signPDF(is, os, humanRect, tsaUrl, "Signature1");
 
