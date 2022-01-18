@@ -3,3 +3,6 @@ signer.keystore.name=keystore.jks
 signer.image.name=hcg.png
 signer.tsaurl=https://timestamp.aped.gov.gr/qtss
 signer.apikey=123
+
+upload.directory=./media
+docsUrlPrefix=http://docs.hcg.gr

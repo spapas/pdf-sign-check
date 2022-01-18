@@ -1,4 +1,4 @@
-package gr.hcg;
+package gr.hcg.check;
 
 import java.util.Date;
 import java.util.HashMap;

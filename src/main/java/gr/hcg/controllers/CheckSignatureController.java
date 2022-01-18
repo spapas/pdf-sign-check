@@ -1,6 +1,8 @@
-package gr.hcg;
+package gr.hcg.controllers;
 
-import com.fasterxml.jackson.annotation.JsonView;
+import gr.hcg.check.PDFSignatureInfo;
+import gr.hcg.check.PDFSignatureInfoParser;
+import gr.hcg.views.JsonView;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -17,8 +19,6 @@ import java.security.NoSuchProviderException;
 import java.security.SignatureException;
 import java.security.cert.CertificateException;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 @Controller
 public class CheckSignatureController {
@@ -59,7 +59,7 @@ public class CheckSignatureController {
         }
 
         if(json!=null && json.equals("on")) {
-            return gr.hcg.JsonView.Render(model, response );
+            return JsonView.Render(model, response );
         }
 
         return new ModelAndView("home", model.asMap());

@@ -1,4 +1,4 @@
-package gr.hcg;
+package gr.hcg.check;
 
 /**
  * Created by serafeim on 13/7/2017.

@@ -1,4 +1,4 @@
-package gr.hcg;
+package gr.hcg.views;
 
 import com.google.gson.Gson;
 import org.springframework.http.MediaType;

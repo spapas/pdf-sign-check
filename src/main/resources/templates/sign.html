@@ -12,15 +12,18 @@
 <p th:text="${message}" />
 
 <form method="POST" action="/sign" enctype="multipart/form-data">
-    <input type="file" name="file" /><br />
     <Label for="apikey">Api key<input id="apikey" type="text" name="apikey" /></Label><br/>
+
+    <Label for="file">File<input id="file" type="file" name="file" /></Label><br />
+    <Label for="year">Year<input id="year" type="text" name="year" /></Label><br />
+    <Label for="folder">Folder<input id="folder" type="text" name="folder" /></Label><br />
+    <Label for="protocol">Protocol<input id="protocol" type="text" name="protocol" /></Label><br />
 
     <Label for="signName">Signature Name<input id="signName" type="text" name="signName" /></Label><br/>
     <Label for="signReason">Signature Reason<input id="signReason" type="text" name="signReason" /></Label><br/>
     <Label for="signLocation">Signature Location<input id="signLocation" type="text" name="signLocation" /></Label><br/>
     <Label for="visibleLine1">Visible Line 1<input id="visibleLine1" type="text" name="visibleLine1" /></Label><br/>
     <Label for="visibleLine2">Visible Line 2<input id="visibleLine2" type="text" name="visibleLine2" /></Label><br/>
-    <Label for="visibleLine2">QR code text<input id="qrcode" type="text" name="qrcode" /></Label><br/>
 
     <br/><br/>
     <input type="submit" value="Submit" />
