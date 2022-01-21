@@ -146,6 +146,7 @@ public abstract class CreateSignatureBase implements SignatureInterface
             {
                 ValidationTimeStamp validation = new ValidationTimeStamp(tsaUrl);
                 signedData = validation.addSignedTimeStamp(signedData);
+
             }
             return signedData.getEncoded();
         }

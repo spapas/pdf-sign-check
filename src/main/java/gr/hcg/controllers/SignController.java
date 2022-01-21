@@ -92,7 +92,7 @@ public class SignController {
         try {
             ByteArrayOutputStream bos = new ByteArrayOutputStream();
             String qrcode = docsUrlPrefix + uuid;
-            signer.sign(file.getInputStream(), bos, signName.orElse(null), signLocation.orElse(null), signReason.orElse(null), visibleLine1.orElse(null), visibleLine2.orElse(null), qrcode);
+            signer.sign(file.getInputStream(), bos, signName.orElse(null), signLocation.orElse(null), signReason.orElse(null), visibleLine1.orElse(null), visibleLine2.orElse(null), uuid, qrcode);
 
             String path = uploadDocumentService.handleUpload(year, folder, protocol, uuid, bos.toByteArray());
             //model.addAttribute("message", path);

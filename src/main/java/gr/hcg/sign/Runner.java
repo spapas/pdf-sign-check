@@ -1,4 +1,3 @@
-/*
 package gr.hcg.sign;
 
 import org.slf4j.LoggerFactory;
@@ -30,12 +29,12 @@ public class Runner implements CommandLineRunner {
     @Override
     public void run(String... args) throws Exception {
         System.out.println("OK");
-        //File documentFile = new File("../test.pdf");
-        //String name = documentFile.getName();
-        //String substring = name.substring(0, name.lastIndexOf('.'));
-        //File signedDocumentFile = new File(documentFile.getParent(), substring + "_signed.pdf");
-
-        //signer.sign(new FileInputStream(documentFile), new FileOutputStream(signedDocumentFile), null, null, null, null, null);
+        File documentFile = new File("foo.pdf");
+        String name = documentFile.getName();
+        String substring = name.substring(0, name.lastIndexOf('.'));
+        File signedDocumentFile = new File(documentFile.getParent(), substring + "_signed.pdf");
+        FileInputStream fis = new FileInputStream(documentFile);
+        FileOutputStream fos = new FileOutputStream(signedDocumentFile);
+        signer.sign(fis, fos, null, null, null, null, null, null, null);
     }
 }
-*/

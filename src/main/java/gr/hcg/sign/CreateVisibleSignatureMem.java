@@ -19,6 +19,7 @@ import org.apache.pdfbox.pdmodel.font.PDType0Font;
 import org.apache.pdfbox.pdmodel.font.PDType1Font;
 import org.apache.pdfbox.pdmodel.graphics.form.PDFormXObject;
 import org.apache.pdfbox.pdmodel.graphics.image.PDImageXObject;
+import org.apache.pdfbox.pdmodel.graphics.state.PDExtendedGraphicsState;
 import org.apache.pdfbox.pdmodel.interactive.annotation.PDAnnotationWidget;
 import org.apache.pdfbox.pdmodel.interactive.annotation.PDAppearanceDictionary;
 import org.apache.pdfbox.pdmodel.interactive.annotation.PDAppearanceStream;
@@ -44,6 +45,8 @@ import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.UnrecoverableKeyException;
 import java.security.cert.CertificateException;
+import java.text.SimpleDateFormat;
+import java.time.format.DateTimeFormatter;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Map;
@@ -70,8 +73,10 @@ public class CreateVisibleSignatureMem extends CreateSignatureBase
     public String signatureReason = "IDENTICAL COPY";
     public String visibleLine1 = "DIGITALLY SIGNED";
     public String visibleLine2 = "MMAIP";
-    public String qrcode = null;
+    public String uuid = "123e4567-e89b-12d3-a456-426614174000";
+    public String qrcode = "http://docs.hcg.gr/validate/123e4567-e89b-12d3-a456-426614174000";
 
+    private Calendar signDate = null;
 
     /**
      * Initialize the signature creator with a keystore (pkcs12) and pin that
@@ -81,6 +86,7 @@ public class CreateVisibleSignatureMem extends CreateSignatureBase
      * @param pin is the pin for the keystore / private key
      * @throws KeyStoreException if the keystore has not been initialized (loaded)
      * @throws NoSuchAlgorithmException if the algorithm for recovering the key cannot be found
+     * @throws UnrecoverableKeyException if the given password is wrong
      * @throws UnrecoverableKeyException if the given password is wrong
      * @throws CertificateException if the certificate is not valid as signing time
      * @throws IOException if no certificate could be found
@@ -107,12 +113,11 @@ public class CreateVisibleSignatureMem extends CreateSignatureBase
      *
      * @param inputStream The source pdf document file.
      * @param signedStream The file to be signed.
-     * @param humanRect rectangle from a human viewpoint (coordinates start at top left)
      * @param tsaUrl optional TSA url
      * @param signatureFieldName optional name of an existing (unsigned) signature field
      * @throws IOException
      */
-    public void signPDF(InputStream inputStream, OutputStream signedStream, Rectangle2D humanRect, String tsaUrl, String signatureFieldName) throws IOException
+    public void signPDF(InputStream inputStream, OutputStream signedStream, String tsaUrl, String signatureFieldName) throws IOException
     {
         setTsaUrl(tsaUrl);
 
@@ -130,6 +135,8 @@ public class CreateVisibleSignatureMem extends CreateSignatureBase
             PDSignature signature = null;
             PDAcroForm acroForm = doc.getDocumentCatalog().getAcroForm();
             PDRectangle rect = null;
+
+            PDShrink.shrinkFirstpage(doc);
 
             // sign a PDF with an existing empty signature, as created by the CreateEmptySignatureForm example.
             if (acroForm != null)
@@ -149,6 +156,9 @@ public class CreateVisibleSignatureMem extends CreateSignatureBase
 
             if (rect == null)
             {
+                // Set the signature rectangle top - left - width - height
+                float width = doc.getPage(0).getMediaBox().getHeight();
+                Rectangle2D humanRect = new Rectangle2D.Float(0, 0, width, 120);
                 rect = createSignatureRectangle(doc, humanRect);
             }
 
@@ -190,8 +200,9 @@ public class CreateVisibleSignatureMem extends CreateSignatureBase
             signature.setLocation(this.signatureLocation);
             signature.setReason(this.signatureReason);
 
+            this.signDate = Calendar.getInstance();
             // the signing date, needed for valid signature
-            signature.setSignDate(Calendar.getInstance());
+            signature.setSignDate(this.signDate);
 
             // do not set SignatureInterface instance, if external signing used
             SignatureInterface signatureInterface = isExternalSigning() ? null : this;
@@ -328,7 +339,8 @@ public class CreateVisibleSignatureMem extends CreateSignatureBase
             PDAppearanceStream appearanceStream = new PDAppearanceStream(form.getCOSObject());
             appearance.setNormalAppearance(appearanceStream);
             widget.setAppearance(appearance);
-
+            float w = appearanceStream.getBBox().getWidth();
+            float h = appearanceStream.getBBox().getHeight();
             try (PDPageContentStream cs = new PDPageContentStream(doc, appearanceStream))
             {
                 // for 90Â° and 270Â° scale ratio of width / height
@@ -340,8 +352,25 @@ public class CreateVisibleSignatureMem extends CreateSignatureBase
                 }
 
                 // show background (just for debugging, to see the rect size + position)
-                cs.setNonStrokingColor(new Color(.9f,.9f,.9f));
+                cs.setNonStrokingColor(new Color(.95f,.95f,.95f));
                 cs.addRect(-5000, -5000, 10000, 10000);
+                cs.fill();
+
+                cs.setNonStrokingColor(Color.BLACK);
+
+                cs.addRect(10, h-8, w/4, 5);
+                cs.fill();
+
+                float fontSize = 10;
+
+                cs.beginText();
+                cs.setFont(font, fontSize);
+                cs.setNonStrokingColor(Color.black);
+
+                cs.newLineAtOffset(w/4 + 15, h-8);
+                cs.showText("Ψηφιακή βεβαίωση εγγράφου");
+                cs.endText();
+                cs.addRect(w/2-50, h-8, w/2-140, 5);
                 cs.fill();
 
                 // show background image
@@ -349,42 +378,87 @@ public class CreateVisibleSignatureMem extends CreateSignatureBase
                 cs.saveGraphicsState();
 
                 cs.transform(Matrix.getScaleInstance(0.5f, 0.5f));
-
-                if(qrcode==null || qrcode.equals("")) {
-                    PDImageXObject img = PDImageXObject.createFromByteArray(doc, imageBytes, null);
-                    cs.drawImage(img, 300, 0);
-                } else {
-                    try {
-                        byte[] qrbytes = generateQRcode(qrcode, 120, 120);
-                        PDImageXObject qrimg = PDImageXObject.createFromByteArray(doc, qrbytes, null);
-                        cs.drawImage(qrimg, 300, 0);
-                    } catch(WriterException e) {
-                        e.printStackTrace();
-                    }
+                try {
+                    byte[] qrbytes = generateQRcode(qrcode, 150, 150);
+                    PDImageXObject qrimg = PDImageXObject.createFromByteArray(doc, qrbytes, null);
+                    cs.drawImage(qrimg, w/2, h / 2);
+                } catch(WriterException e) {
+                    e.printStackTrace();
                 }
 
                 cs.restoreGraphicsState();
 
-                // show text
-                float fontSize = 10;
-                float leading = fontSize * 1.5f;
                 cs.beginText();
-                cs.setFont(font, fontSize);
-                cs.setNonStrokingColor(Color.black);
-                cs.newLineAtOffset(fontSize, height - leading);
-                cs.setLeading(leading);
-                cs.showText(this.visibleLine1);
+                cs.setLeading(10);
+                cs.setFont(font, 8);
+                cs.newLineAtOffset(10, h-30);
+                cs.showText("Μπορείτε να ελέγξετε την ισχύ του εγγράφου");
                 cs.newLine();
-                cs.showText(this.visibleLine2);
-                cs.endText();
-            }
+                cs.showText("σκανάροντας το QR code ή εισάγοντας τον κωδικό");
+                cs.newLine();
+                cs.showText("στο docs.hcg.gr/validate");
+                cs.newLine();
+                cs.newLine();
 
-            // no need to set annotations and /P entry
+                cs.setFont(font, 9);
+                cs.showText("Κωδικός εγγράφου:");
+                cs.newLine();
+                cs.showText(uuid);
+                cs.endText();
+
+
+                cs.beginText();
+                cs.newLineAtOffset(w/4, 20);
+                cs.showText("Σελίδα 1 από " + srcDoc.getNumberOfPages());
+                cs.endText();
+
+                cs.beginText();
+                cs.setFont(font, 7);
+                cs.newLineAtOffset(w/4 + w/8, h-40);
+                cs.showText("Επιβεβαιώνεται το γνήσιο. Υπουργείο Ναυτιλίας");
+                cs.newLine();
+                cs.showText("και Νησιωτικής Πολιτικής / Verified by the ");
+                cs.newLine();
+                cs.showText("Ministry of Maritime Affairs and Insular Policy");
+                cs.newLine();
+                SimpleDateFormat sdf2 = new SimpleDateFormat("yyyMMddHHmmssSZ");
+                cs.showText(sdf2.format(this.signDate.getTime()));
+                cs.endText();
+
+                cs.setFont(font, 10);
+                showTextRight(cs, font, "Υπογραφή από:", w, h-40);
+                showTextRight(cs, font, this.visibleLine1, w, h-50);
+                showTextRight(cs, font, this.visibleLine2, w, h-60);
+                showTextRight(cs, font, "Ημερομηνία υπογραφής:", w, h-70);
+                SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+                showTextRight(cs, font, sdf.format(this.signDate.getTime()), w, h-80);
+
+                float alpha = 0.2f;
+                PDExtendedGraphicsState graphicsState = new PDExtendedGraphicsState();
+                graphicsState.setStrokingAlphaConstant(alpha);
+                graphicsState.setNonStrokingAlphaConstant(alpha);
+                cs.setGraphicsStateParameters(graphicsState);
+
+                PDImageXObject img = PDImageXObject.createFromByteArray(doc, imageBytes, null);
+                img.setHeight(30);
+                img.setWidth(35);
+                cs.drawImage(img, w/4 + w/8, h/2);
+                cs.restoreGraphicsState();
+            }
 
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             doc.save(baos);
             return new ByteArrayInputStream(baos.toByteArray());
         }
+    }
+
+    private static void showTextRight(PDPageContentStream cs, PDFont font, String text, float w, float y) throws IOException {
+        cs.beginText();
+        float xoffset = w - font.getStringWidth(text) / 1000*10 -200 ;
+        cs.newLineAtOffset(xoffset, y);
+        cs.setNonStrokingColor(Color.black);
+        cs.showText(text);
+        cs.endText();
     }
 
     // Find an existing signature (assumed to be empty). You will usually not need this.

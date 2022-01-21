@@ -41,7 +41,7 @@ public class Signer {
 
     }
 
-    public static void setIfNotNull(CreateVisibleSignatureMem signing, String signName, String signLocation, String signReason, String visibleLine1, String visibleLine2, String qrcode) {
+    public static void setIfNotNull(CreateVisibleSignatureMem signing, String signName, String signLocation, String signReason, String visibleLine1, String visibleLine2, String uuid, String qrcode) {
 
         if(signName!=null) {
             signing.signatureName = signName;
@@ -58,13 +58,16 @@ public class Signer {
         if(visibleLine2!=null) {
             signing.visibleLine2 = visibleLine2;
         }
+        if(uuid!=null) {
+            signing.uuid = uuid;
+        }
         if(qrcode!=null) {
             signing.qrcode = qrcode;
         }
     }
 
 
-    public void sign(InputStream is, OutputStream os, String signName, String signLocation, String signReason, String visibleLine1, String visibleLine2, String qrcode) throws KeyStoreException, CertificateException, IOException, NoSuchAlgorithmException, UnrecoverableKeyException {
+    public void sign(InputStream is, OutputStream os, String signName, String signLocation, String signReason, String visibleLine1, String visibleLine2, String uuid, String qrcode) throws KeyStoreException, CertificateException, IOException, NoSuchAlgorithmException, UnrecoverableKeyException {
 
         InputStream ksInputStream = new FileInputStream(keystoreName);
 
@@ -73,15 +76,12 @@ public class Signer {
         keystore.load(ksInputStream, pin);
 
         CreateVisibleSignatureMem signing = new CreateVisibleSignatureMem(keystore, pin.clone());
-        setIfNotNull(signing, signName, signLocation, signReason, visibleLine1, visibleLine2, qrcode);
+        setIfNotNull(signing, signName, signLocation, signReason, visibleLine1, visibleLine2, uuid, qrcode);
 
         InputStream imageResource = new FileInputStream(imageName);
         signing.setImageBytes(readBytes(imageResource));
 
-        // Set the signature rectangle top - left - width - height
-        Rectangle2D humanRect = new Rectangle2D.Float(0, 0, 200, 60);
-
-        signing.signPDF(is, os, humanRect, tsaUrl, "Signature1");
+        signing.signPDF(is, os, tsaUrl, "Signature1");
 
     }
 
