@@ -1,9 +1,10 @@
 package gr.hcg.controllers;
 
 import com.google.gson.JsonObject;
+import gr.hcg.check.PDFSignatureInfo;
+import gr.hcg.check.PDFSignatureInfoParser;
 import gr.hcg.services.UploadDocumentService;
 import gr.hcg.sign.Signer;
-import org.eclipse.jetty.util.ajax.JSON;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.beans.factory.annotation.Value;
@@ -18,16 +19,14 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
+import javax.naming.InvalidNameException;
 import javax.servlet.http.HttpServletResponse;
-import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
-import java.security.KeyStoreException;
-import java.security.NoSuchAlgorithmException;
-import java.security.UnrecoverableKeyException;
+import java.security.*;
 import java.security.cert.CertificateException;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -58,6 +57,18 @@ public class SignController {
 
     }
 
+    private ResponseEntity<byte[]> handleUpload(String year, String folder, String protocol, String uuid, byte[] bytes) throws IOException {
+        String path = uploadDocumentService.handleUpload(year, folder, protocol, uuid, bytes);
+
+        final HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        JsonObject jo = new JsonObject();
+        jo.addProperty("uuid", uuid);
+        jo.addProperty("path", path);
+
+        return new ResponseEntity<>(jo.toString().getBytes(StandardCharsets.UTF_8), headers, HttpStatus.OK);
+    }
+
     @PostMapping("/sign")
     public Object singleFileUpload(Model model,
                                    @RequestParam(value = "file") MultipartFile file,
@@ -65,11 +76,13 @@ public class SignController {
                                    @RequestParam(value = "protocol") String protocol,
                                    @RequestParam(value = "folder") String folder,
                                    @RequestParam(value = "apikey") String apikey,
+                                   @RequestParam(value = "signed") Optional<Boolean> signed,
                                    @RequestParam(value = "signName") Optional<String> signName,
                                    @RequestParam(value = "signReason") Optional<String> signReason,
                                    @RequestParam(value = "signLocation") Optional<String> signLocation,
                                    @RequestParam(value = "visibleLine1") Optional<String> visibleLine1,
                                    @RequestParam(value = "visibleLine2") Optional<String> visibleLine2,
+
                                    // @RequestParam(value = "qrcode") Optional<String> qrcode,
                                    HttpServletResponse response ) {
 
@@ -89,32 +102,42 @@ public class SignController {
 
         final String uuid = UUID.randomUUID().toString();
 
-        try {
-            ByteArrayOutputStream bos = new ByteArrayOutputStream();
-            String qrcode = docsUrlPrefix + uuid;
-            signer.sign(file.getInputStream(), bos, signName.orElse(null), signLocation.orElse(null), signReason.orElse(null), visibleLine1.orElse(null), visibleLine2.orElse(null), uuid, qrcode);
+        if (signed.orElse(false) == true) {
 
-            String path = uploadDocumentService.handleUpload(year, folder, protocol, uuid, bos.toByteArray());
-            //model.addAttribute("message", path);
-            //return "sign";
+            byte[] bytes = new byte[0];
+            try {
+                bytes = file.getBytes();
+                List<PDFSignatureInfo> info = PDFSignatureInfoParser.getPDFSignatureInfo(bytes);
+                if (info.isEmpty()) {
+                    model.addAttribute("message", "Cannot validate siganture");
+                } else {
+                    return handleUpload(year, folder, protocol, uuid, bytes);
+                }
 
-            final HttpHeaders headers = new HttpHeaders();
-            headers.setContentType(MediaType.APPLICATION_JSON);
-            JsonObject jo = new JsonObject();
-            jo.addProperty("uuid", uuid);
-            jo.addProperty("path", path);
+            } catch (IOException | InvalidNameException | CertificateException | NoSuchAlgorithmException | SignatureException | InvalidKeyException | NoSuchProviderException e) {
 
-            return  new ResponseEntity<>(jo.toString().getBytes(StandardCharsets.UTF_8), headers, HttpStatus.OK);
-            //final HttpHeaders headers = new HttpHeaders();
-            //headers.setContentType(MediaType.APPLICATION_PDF);
-            //return  new ResponseEntity<>(bos.toByteArray(), headers, HttpStatus.OK);
+                e.printStackTrace();
+                model.addAttribute("message", "Cannot validate siganture");
+                return "sign";
+            }
 
-        } catch (IOException | KeyStoreException | CertificateException | NoSuchAlgorithmException | UnrecoverableKeyException e) {
-            model.addAttribute("message", "General error!");
-            e.printStackTrace();
+
             return "sign";
-        }
+        } else {
 
+            try {
+                ByteArrayOutputStream bos = new ByteArrayOutputStream();
+                String qrcode = docsUrlPrefix + uuid;
+                signer.sign(file.getInputStream(), bos, signName.orElse(null), signLocation.orElse(null), signReason.orElse(null), visibleLine1.orElse(null), visibleLine2.orElse(null), uuid, qrcode);
+                return handleUpload(year, folder, protocol, uuid, bos.toByteArray());
+
+            } catch (IOException | KeyStoreException | CertificateException | NoSuchAlgorithmException | UnrecoverableKeyException e) {
+                model.addAttribute("message", "General error!");
+                e.printStackTrace();
+                return "sign";
+            }
+
+        }
 
         //return new ModelAndView("sign", model.asMap());
 
