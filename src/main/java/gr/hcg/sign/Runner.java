@@ -11,7 +11,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.util.logging.Logger;
 
-@SpringBootApplication
+
 public class Runner implements CommandLineRunner {
 
 
