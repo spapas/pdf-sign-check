@@ -14,6 +14,7 @@ import org.apache.pdfbox.pdmodel.PDPageContentStream;
 import org.apache.pdfbox.pdmodel.PDResources;
 import org.apache.pdfbox.pdmodel.common.PDRectangle;
 import org.apache.pdfbox.pdmodel.common.PDStream;
+import org.apache.pdfbox.pdmodel.fixup.PDDocumentFixup;
 import org.apache.pdfbox.pdmodel.font.PDFont;
 import org.apache.pdfbox.pdmodel.font.PDType0Font;
 import org.apache.pdfbox.pdmodel.font.PDType1Font;
@@ -72,7 +73,7 @@ public class CreateVisibleSignatureMem extends CreateSignatureBase
     public String signatureLocation = "PIRAEUS, GREECE";
     public String signatureReason = "IDENTICAL COPY";
     public String visibleLine1 = "DIGITALLY SIGNED";
-    public String visibleLine2 = "MMAIP";
+    public String visibleLine2 = "Ministry of Maritime and Insular Policy";
     public String uuid = "123e4567-e89b-12d3-a456-426614174000";
     public String qrcode = "http://docs.hcg.gr/validate/123e4567-e89b-12d3-a456-426614174000";
 
@@ -156,8 +157,7 @@ public class CreateVisibleSignatureMem extends CreateSignatureBase
 
             if (rect == null)
             {
-                // Set the signature rectangle top - left - width - height
-                float width = doc.getPage(0).getMediaBox().getHeight();
+                float width = doc.getPage(0).getMediaBox().getWidth();
                 Rectangle2D humanRect = new Rectangle2D.Float(0, 0, width, 120);
                 rect = createSignatureRectangle(doc, humanRect);
             }
@@ -352,98 +352,19 @@ public class CreateVisibleSignatureMem extends CreateSignatureBase
                 }
 
                 // show background (just for debugging, to see the rect size + position)
-                cs.setNonStrokingColor(new Color(.95f,.95f,.95f));
-                cs.addRect(-5000, -5000, 10000, 10000);
-                cs.fill();
-
-                cs.setNonStrokingColor(Color.BLACK);
-
-                cs.addRect(10, h-8, w/4, 5);
-                cs.fill();
-
-                float fontSize = 10;
-
-                cs.beginText();
-                cs.setFont(font, fontSize);
-                cs.setNonStrokingColor(Color.black);
-
-                cs.newLineAtOffset(w/4 + 15, h-8);
-                cs.showText("Ψηφιακή βεβαίωση εγγράφου");
-                cs.endText();
-                cs.addRect(w/2-50, h-8, w/2-140, 5);
-                cs.fill();
-
-                // show background image
-                // save and restore graphics if the image is too large and needs to be scaled
+                //cs.setNonStrokingColor(new Color(.95f,.95f,.95f));
+                //cs.addRect(-5000, -5000, 10000, 10000);
+                //cs.fill();
+                addHeader(cs, w, h, font);
                 cs.saveGraphicsState();
 
-                cs.transform(Matrix.getScaleInstance(0.5f, 0.5f));
-                try {
-                    byte[] qrbytes = generateQRcode(qrcode, 150, 150);
-                    PDImageXObject qrimg = PDImageXObject.createFromByteArray(doc, qrbytes, null);
-                    cs.drawImage(qrimg, w/2, h / 2);
-                } catch(WriterException e) {
-                    e.printStackTrace();
-                }
+                addFooter(cs, w, h, srcDoc);
+                addLeftPart(doc, qrcode, uuid, cs, font,  w, h);
+                addCenterPart(cs, w, h, font, this.signDate);
 
-                cs.restoreGraphicsState();
+                addRightPart(cs, font, w, h, this.signDate, this.visibleLine1, this.visibleLine2);
+                addCenterOverlay(cs, w, h, doc, imageBytes);
 
-                cs.beginText();
-                cs.setLeading(10);
-                cs.setFont(font, 8);
-                cs.newLineAtOffset(10, h-30);
-                cs.showText("Μπορείτε να ελέγξετε την ισχύ του εγγράφου");
-                cs.newLine();
-                cs.showText("σκανάροντας το QR code ή εισάγοντας τον κωδικό");
-                cs.newLine();
-                cs.showText("στο docs.hcg.gr/validate");
-                cs.newLine();
-                cs.newLine();
-
-                cs.setFont(font, 9);
-                cs.showText("Κωδικός εγγράφου:");
-                cs.newLine();
-                cs.showText(uuid);
-                cs.endText();
-
-
-                cs.beginText();
-                cs.newLineAtOffset(w/4, 20);
-                cs.showText("Σελίδα 1 από " + srcDoc.getNumberOfPages());
-                cs.endText();
-
-                cs.beginText();
-                cs.setFont(font, 7);
-                cs.newLineAtOffset(w/4 + w/8, h-40);
-                cs.showText("Επιβεβαιώνεται το γνήσιο. Υπουργείο Ναυτιλίας");
-                cs.newLine();
-                cs.showText("και Νησιωτικής Πολιτικής / Verified by the ");
-                cs.newLine();
-                cs.showText("Ministry of Maritime Affairs and Insular Policy");
-                cs.newLine();
-                SimpleDateFormat sdf2 = new SimpleDateFormat("yyyMMddHHmmssSZ");
-                cs.showText(sdf2.format(this.signDate.getTime()));
-                cs.endText();
-
-                cs.setFont(font, 10);
-                showTextRight(cs, font, "Υπογραφή από:", w, h-40);
-                showTextRight(cs, font, this.visibleLine1, w, h-50);
-                showTextRight(cs, font, this.visibleLine2, w, h-60);
-                showTextRight(cs, font, "Ημερομηνία υπογραφής:", w, h-70);
-                SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
-                showTextRight(cs, font, sdf.format(this.signDate.getTime()), w, h-80);
-
-                float alpha = 0.2f;
-                PDExtendedGraphicsState graphicsState = new PDExtendedGraphicsState();
-                graphicsState.setStrokingAlphaConstant(alpha);
-                graphicsState.setNonStrokingAlphaConstant(alpha);
-                cs.setGraphicsStateParameters(graphicsState);
-
-                PDImageXObject img = PDImageXObject.createFromByteArray(doc, imageBytes, null);
-                img.setHeight(30);
-                img.setWidth(35);
-                cs.drawImage(img, w/4 + w/8, h/2);
-                cs.restoreGraphicsState();
             }
 
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -452,9 +373,112 @@ public class CreateVisibleSignatureMem extends CreateSignatureBase
         }
     }
 
-    private static void showTextRight(PDPageContentStream cs, PDFont font, String text, float w, float y) throws IOException {
+    private static void addHeader(PDPageContentStream cs, float w, float h, PDFont font) throws IOException {
+        cs.setNonStrokingColor(Color.BLACK);
+
+        cs.addRect(10, h-8, w/3, 5);
+        cs.fill();
+
+        float fontSize = 10;
+
         cs.beginText();
-        float xoffset = w - font.getStringWidth(text) / 1000*10 -200 ;
+        cs.setFont(font, fontSize);
+        cs.setNonStrokingColor(Color.black);
+
+        cs.newLineAtOffset(w/3 + 40, h-8);
+        cs.showText("Ψηφιακή βεβαίωση εγγράφου");
+        cs.endText();
+        cs.addRect(2*w/3, h-8, w/3-10, 5);
+        cs.fill();
+    }
+
+    private static void addFooter(PDPageContentStream cs, float w, float h, PDDocument srcDoc) throws IOException {
+
+        cs.beginText();
+        cs.newLineAtOffset(w/2 - 30, 20);
+        cs.showText("Σελίδα 1 από " + srcDoc.getNumberOfPages());
+        cs.endText();
+    }
+
+    private static void addCenterPart(PDPageContentStream cs, float w, float h, PDFont font, Calendar signDate) throws IOException {
+
+        cs.beginText();
+        cs.setFont(font, 7);
+        cs.newLineAtOffset(w/2-40, h-40);
+        cs.showText("Επιβεβαιώνεται το γνήσιο. Υπουργείο Ναυτιλίας");
+        cs.newLine();
+        cs.showText("και Νησιωτικής Πολιτικής / Verified by the ");
+        cs.newLine();
+        cs.showText("Ministry of Maritime Affairs and Insular Policy");
+        cs.newLine();
+        SimpleDateFormat sdf2 = new SimpleDateFormat("yyyMMddHHmmssSZ");
+        cs.showText(sdf2.format(signDate.getTime()));
+        cs.endText();
+
+    }
+
+    private static void addCenterOverlay(PDPageContentStream cs, float w, float h, PDDocument doc, byte[] imageBytes) throws IOException {
+
+        float alpha = 0.2f;
+        PDExtendedGraphicsState graphicsState = new PDExtendedGraphicsState();
+        graphicsState.setStrokingAlphaConstant(alpha);
+        graphicsState.setNonStrokingAlphaConstant(alpha);
+        cs.setGraphicsStateParameters(graphicsState);
+
+        PDImageXObject img = PDImageXObject.createFromByteArray(doc, imageBytes, null);
+        img.setHeight(30);
+        img.setWidth(35);
+        cs.drawImage(img, w/2, h/2);
+        cs.restoreGraphicsState();
+    }
+
+    private static void addLeftPart(PDDocument doc, String qrcode, String uuid, PDPageContentStream cs, PDFont font, float w, float h) throws IOException {
+
+        cs.transform(Matrix.getScaleInstance(0.5f, 0.5f));
+        try {
+            byte[] qrbytes = generateQRcode(qrcode, 150, 150);
+            PDImageXObject qrimg = PDImageXObject.createFromByteArray(doc, qrbytes, null);
+            cs.drawImage(qrimg, 2*w/3 - 50, h / 2);
+        } catch(WriterException e) {
+            e.printStackTrace();
+        }
+
+        cs.restoreGraphicsState();
+
+        cs.beginText();
+        cs.setLeading(10);
+        cs.setFont(font, 8);
+        cs.newLineAtOffset(10, h-30);
+        cs.showText("Μπορείτε να ελέγξετε την ισχύ του εγγράφου");
+        cs.newLine();
+        cs.showText("σκανάροντας το QR code ή εισάγοντας τον κωδικό");
+        cs.newLine();
+        cs.showText("στο docs.hcg.gr/validate");
+        cs.newLine();
+        cs.newLine();
+
+        cs.setFont(font, 9);
+        cs.showText("Κωδικός εγγράφου:");
+        cs.newLine();
+        cs.showText(uuid);
+        cs.endText();
+
+    }
+
+    private static void addRightPart(PDPageContentStream cs, PDFont font, float w, float h, Calendar signDate, String visibleLine1, String visibleLine2) throws IOException {
+        float fontSize = 9f;
+        cs.setFont(font, fontSize);
+        showTextRight(cs, font, "Υπογραφή από:", w, h-40, fontSize);
+        showTextRight(cs, font, visibleLine1, w, h-50, fontSize);
+        showTextRight(cs, font, visibleLine2, w, h-60, fontSize);
+        showTextRight(cs, font, "Ημερομηνία υπογραφής:", w, h-70, fontSize);
+        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+        showTextRight(cs, font, sdf.format(signDate.getTime()), w, h-80, fontSize);
+    }
+
+    private static void showTextRight(PDPageContentStream cs, PDFont font, String text, float w, float y, float fontSize ) throws IOException {
+        cs.beginText();
+        float xoffset = w - font.getStringWidth(text) / 1000 * fontSize - 15;
         cs.newLineAtOffset(xoffset, y);
         cs.setNonStrokingColor(Color.black);
         cs.showText(text);
@@ -489,9 +513,5 @@ public class CreateVisibleSignatureMem extends CreateSignatureBase
         }
         return signature;
     }
-
-
-
-
 
 }

@@ -11,7 +11,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.util.logging.Logger;
 
-
+@SpringBootApplication
 public class Runner implements CommandLineRunner {
 
 
@@ -29,7 +29,7 @@ public class Runner implements CommandLineRunner {
     @Override
     public void run(String... args) throws Exception {
         System.out.println("OK");
-        File documentFile = new File("foo.pdf");
+        File documentFile = new File("sample.pdf");
         String name = documentFile.getName();
         String substring = name.substring(0, name.lastIndexOf('.'));
         File signedDocumentFile = new File(documentFile.getParent(), substring + "_signed.pdf");
