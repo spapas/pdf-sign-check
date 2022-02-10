@@ -11,6 +11,12 @@
 <!--/*@thymesVar id="message" type=""*/-->
 <p th:text="${message}" />
 
+<div th:if="${uuid!=null}">
+    File uploaded!<br />
+    UUID: <b><th:block th:text="${uuid}" /></b><br />
+    Path: <b><th:block th:text="${path}" /></b>
+</div>
+
 <form method="POST" action="/sign" enctype="multipart/form-data">
     <Label for="apikey">Api key<input id="apikey" type="text" name="apikey" /></Label><br/>
 
@@ -26,6 +32,7 @@
     <Label for="visibleLine2">Visible Line 2<input id="visibleLine2" type="text" name="visibleLine2" /></Label><br/>
 
     <Label for="signed">Signed<input id="signed" type="checkbox" name="signed" value="true"/></Label><br />
+    <Label for="json">Json output:<input id="json" type="checkbox" name="json" /></Label>
 
     <br/><br/>
     <input type="submit" value="Submit" />
