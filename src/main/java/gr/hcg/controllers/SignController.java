@@ -59,8 +59,8 @@ public class SignController {
     }
 
     //private ResponseEntity<byte[]> handleUpload(String year, String folder, String protocol, String uuid, byte[] bytes) throws IOException {
-    private JsonObject handleUpload(String year, String folder, String protocol, String uuid, byte[] bytes) throws IOException {
-        String path = uploadDocumentService.handleUpload(year, folder, protocol, uuid, bytes);
+    private JsonObject handleUpload(String year, String authority, String folder, String protocol, String uuid, byte[] bytes) throws IOException {
+        String path = uploadDocumentService.handleUpload(year, authority, folder, protocol, uuid, bytes);
 
         final HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
@@ -86,6 +86,7 @@ public class SignController {
                                    @RequestParam(value = "file") MultipartFile file,
                                    @RequestParam(value = "year") String year,
                                    @RequestParam(value = "protocol") String protocol,
+                                   @RequestParam(value = "authority") String authority,
                                    @RequestParam(value = "folder") String folder,
                                    @RequestParam(value = "apikey") String apikey,
                                    @RequestParam(value = "signed") Optional<Boolean> signed,
@@ -112,8 +113,8 @@ public class SignController {
             model.addAttribute("error", true);
             return respondHtmlOrJson(json, model, response);
         }
-        if(year==null || protocol == null || folder == null || year.equals("") || protocol.equals("") || folder.equals("")) {
-            model.addAttribute("message", "Fill year, protocol and folder");
+        if(year==null || protocol == null || authority == null || folder == null || year.equals("") || protocol.equals("") || folder.equals("")  || authority.equals("")) {
+            model.addAttribute("message", "Fill year, authority, folder and protocol");
             model.addAttribute("error", true);
             return respondHtmlOrJson(json, model, response);
         }
@@ -130,7 +131,7 @@ public class SignController {
                     model.addAttribute("error", true);
                     model.addAttribute("message", "Cannot find siganture");
                 } else {
-                    JsonObject jo = handleUpload(year, folder, protocol, uuid, bytes);
+                    JsonObject jo = handleUpload(year, authority, folder, protocol, uuid, bytes);
                     model.addAttribute("path", jo.get("path"));
                     model.addAttribute("uuid", jo.get("uuid"));
                     return respondHtmlOrJson(json, model, response);
@@ -151,7 +152,7 @@ public class SignController {
                 ByteArrayOutputStream bos = new ByteArrayOutputStream();
                 String qrcode = docsUrlPrefix + uuid;
                 signer.sign(file.getInputStream(), bos, signName.orElse(null), signLocation.orElse(null), signReason.orElse(null), visibleLine1.orElse(null), visibleLine2.orElse(null), uuid, qrcode);
-                JsonObject jo = handleUpload(year, folder, protocol, uuid, bos.toByteArray());
+                JsonObject jo = handleUpload(year, authority, folder, protocol, uuid, bos.toByteArray());
                 model.addAttribute("path", jo.get("path"));
                 model.addAttribute("uuid", jo.get("uuid"));
                 return respondHtmlOrJson(json, model, response);
