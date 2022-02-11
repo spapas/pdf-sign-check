@@ -14,7 +14,8 @@
 <div th:if="${uuid!=null}">
     File uploaded!<br />
     UUID: <b><th:block th:text="${uuid}" /></b><br />
-    Path: <b><th:block th:text="${path}" /></b>
+    Path: <b><th:block th:text="${path}" /></b><br />
+    Sign Date: <b><th:block th:text="${signDate}" /></b>
 </div>
 
 <form method="POST" action="/sign" enctype="multipart/form-data">

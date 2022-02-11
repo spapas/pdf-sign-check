@@ -118,7 +118,7 @@ public class CreateVisibleSignatureMem extends CreateSignatureBase
      * @param signatureFieldName optional name of an existing (unsigned) signature field
      * @throws IOException
      */
-    public void signPDF(InputStream inputStream, OutputStream signedStream, String tsaUrl, String signatureFieldName) throws IOException
+    public Calendar signPDF(InputStream inputStream, OutputStream signedStream, String tsaUrl, String signatureFieldName) throws IOException
     {
         setTsaUrl(tsaUrl);
 
@@ -225,6 +225,7 @@ public class CreateVisibleSignatureMem extends CreateSignatureBase
         // in signature options might by closed by gc, which would close COSStream objects prematurely.
         // See https://issues.apache.org/jira/browse/PDFBOX-3743
         IOUtils.closeQuietly(signatureOptions);
+        return this.signDate;
     }
 
     private PDRectangle createSignatureRectangle(PDDocument doc, Rectangle2D humanRect)

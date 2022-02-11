@@ -27,6 +27,8 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.security.*;
 import java.security.cert.CertificateException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -151,10 +153,14 @@ public class SignController {
             try {
                 ByteArrayOutputStream bos = new ByteArrayOutputStream();
                 String qrcode = docsUrlPrefix + uuid;
-                signer.sign(file.getInputStream(), bos, signName.orElse(null), signLocation.orElse(null), signReason.orElse(null), visibleLine1.orElse(null), visibleLine2.orElse(null), uuid, qrcode);
+                Calendar signDate = signer.sign(file.getInputStream(), bos, signName.orElse(null), signLocation.orElse(null), signReason.orElse(null), visibleLine1.orElse(null), visibleLine2.orElse(null), uuid, qrcode);
                 JsonObject jo = handleUpload(year, authority, folder, protocol, uuid, bos.toByteArray());
                 model.addAttribute("path", jo.get("path"));
                 model.addAttribute("uuid", jo.get("uuid"));
+                SimpleDateFormat jsonDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ");
+                String signDateOk = jsonDateFormat.format(signDate.getTime());
+
+                model.addAttribute("signDate", signDateOk);
                 return respondHtmlOrJson(json, model, response);
 
             } catch (IOException | KeyStoreException | CertificateException | NoSuchAlgorithmException | UnrecoverableKeyException | IllegalStateException e) {

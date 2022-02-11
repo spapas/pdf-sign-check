@@ -11,6 +11,7 @@ import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.UnrecoverableKeyException;
 import java.security.cert.CertificateException;
+import java.util.Calendar;
 
 @Component
 public class Signer {
@@ -67,7 +68,7 @@ public class Signer {
     }
 
 
-    public void sign(InputStream is, OutputStream os, String signName, String signLocation, String signReason, String visibleLine1, String visibleLine2, String uuid, String qrcode) throws KeyStoreException, CertificateException, IOException, NoSuchAlgorithmException, UnrecoverableKeyException {
+    public Calendar sign(InputStream is, OutputStream os, String signName, String signLocation, String signReason, String visibleLine1, String visibleLine2, String uuid, String qrcode) throws KeyStoreException, CertificateException, IOException, NoSuchAlgorithmException, UnrecoverableKeyException {
 
         InputStream ksInputStream = new FileInputStream(keystoreName);
 
@@ -81,7 +82,7 @@ public class Signer {
         InputStream imageResource = new FileInputStream(imageName);
         signing.setImageBytes(readBytes(imageResource));
 
-        signing.signPDF(is, os, tsaUrl, "Signature1");
+        return signing.signPDF(is, os, tsaUrl, "Signature1");
 
     }
 
