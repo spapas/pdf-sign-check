@@ -43,7 +43,7 @@ public class SignController {
     @Value("${signer.apikey}")
     private String signerapikey;
 
-    @Value("${signer.apikey}")
+    @Value("${signer.docsUrlPrefix}")
     private String docsUrlPrefix;
 
     @Autowired
