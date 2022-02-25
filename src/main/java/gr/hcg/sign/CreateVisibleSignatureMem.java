@@ -454,7 +454,7 @@ public class CreateVisibleSignatureMem extends CreateSignatureBase
         cs.newLine();
         cs.showText("σκανάροντας το QR code ή εισάγοντας τον κωδικό");
         cs.newLine();
-        cs.showText("στο docs.hcg.gr/validate");
+        cs.showText("στο https://www.hcg.gr/validate");
         cs.newLine();
         cs.newLine();
 
