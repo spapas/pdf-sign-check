@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <include resource="org/springframework/boot/logging/logback/base.xml"/>
+    <springProperty scope="context" name="email.password" source="email.password" defaultValue=""/>
+    <appender name="EMAIL" class="ch.qos.logback.classic.net.SMTPAppender">
+        <smtpHost>mail.hcg.gr</smtpHost>
+        <smtpPort>587</smtpPort>
+        <STARTTLS>true</STARTTLS>
+        <username>noreply@hcg.gr</username>
+        <password>${email.password}</password>
+        <to>spapas@hcg.gr</to>
+        <from>noreply@hcg.gr</from>
+        <subject>[PDFSIGN ERROR] %logger{20} - %m</subject>
+        <layout class="ch.qos.logback.classic.PatternLayout">
+            <pattern>%date %-5level %logger - %message%n</pattern>
+        </layout>
+    </appender>
+
+    <root level="info">
+        <appender-ref ref="EMAIL" />
+    </root>
+</configuration>
