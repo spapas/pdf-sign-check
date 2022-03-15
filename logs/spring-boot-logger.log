@@ -249,3 +249,9 @@
 2022-03-15 13:41:23,913 INFO org.springframework.scheduling.concurrent.ExecutorConfigurationSupport [restartedMain] Initializing ExecutorService 'applicationTaskExecutor'
 2022-03-15 13:41:23,945 INFO org.springframework.boot.devtools.autoconfigure.OptionalLiveReloadServer [restartedMain] LiveReload server is running on port 35729
 2022-03-15 13:41:23,952 INFO org.eclipse.jetty.server.handler.ContextHandler$Context [restartedMain] Initializing Spring DispatcherServlet 'dispatcherServlet'
+2022-03-15 13:41:23,952 INFO org.springframework.web.servlet.FrameworkServlet [restartedMain] Initializing Servlet 'dispatcherServlet'
+2022-03-15 13:41:23,953 INFO org.springframework.web.servlet.FrameworkServlet [restartedMain] Completed initialization in 1 ms
+2022-03-15 13:41:23,958 INFO org.eclipse.jetty.server.AbstractConnector [restartedMain] Started ServerConnector@1fec3227{HTTP/1.1, (http/1.1)}{0.0.0.0:8081}
+2022-03-15 13:41:23,958 INFO org.springframework.boot.web.embedded.jetty.JettyWebServer [restartedMain] Jetty started on port(s) 8081 (http/1.1) with context path '/'
+2022-03-15 13:41:23,962 INFO org.springframework.boot.StartupInfoLogger [restartedMain] Started Application in 0.327 seconds (JVM running for 349.547)
+2022-03-15 13:41:23,963 INFO org.springframework.boot.devtools.autoconfigure.ConditionEvaluationDeltaLoggingListener [restartedMain] Condition evaluation unchanged
