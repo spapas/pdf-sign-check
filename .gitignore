@@ -93,3 +93,4 @@ src/main/resources/*.jks
 *.p12
 *.jks
 signcheck.log
+logs
