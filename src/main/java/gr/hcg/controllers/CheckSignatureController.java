@@ -24,7 +24,7 @@ import java.util.logging.Logger;
 
 @Controller
 public class CheckSignatureController {
-    Logger logger = LogManager.getLogManager().getLogger(CheckSignatureController.class.getName());
+    Logger logger = Logger.getLogger(CheckSignatureController.class.getName());
 
     @Value("${check.config}")
     private String checkConfig;
