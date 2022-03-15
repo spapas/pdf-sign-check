@@ -1,3 +1,4 @@
+
 # pdf-sign-check
 A java/spring boot application to help you *sign* and *check* your signed pdf documents. 
 For checking, you upload the PDF file and you'll get its signing information.
@@ -30,8 +31,6 @@ that are signed by this key will be valid. So now the flow will be:
 2. Application X generates a PDF document/receipt of that action
 3. Application X automatically uses this project (pdf-sign-check) to add a digital signature to the document
 4. The user downloads the signed document and can legally use it wherever he wishes
-
-
 
 ## Installation
 
@@ -69,6 +68,12 @@ to see the (really simple)
 web interface or call it through the REST API. 
 Properties can be configured through ``src/main/resources/application.properties``.
 
+Create a test certificate for signing if needed:
+
+```
+openssl req -x509 -newkey rsa:4096 -keyout key.pem -out cert.pem -days 365 -nodes -subj /CN=MyHost.com
+openssl pkcs12 -export -in cert.pem -inkey key.pem -out myfile.p12 -name "Alias of cert"
+```
 
 ## Usage
 
