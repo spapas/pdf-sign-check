@@ -19,9 +19,12 @@ import java.security.NoSuchProviderException;
 import java.security.SignatureException;
 import java.security.cert.CertificateException;
 import java.util.List;
+import java.util.logging.LogManager;
+import java.util.logging.Logger;
 
 @Controller
 public class CheckSignatureController {
+    Logger logger = LogManager.getLogManager().getLogger(CheckSignatureController.class.getName());
 
     @Value("${check.config}")
     private String checkConfig;
@@ -56,6 +59,7 @@ public class CheckSignatureController {
         } catch (IOException | InvalidNameException | CertificateException| NoSuchAlgorithmException | InvalidKeyException |SignatureException | NoSuchProviderException e) {
             model.addAttribute("message", "Cannot open file: " + e.getMessage());
             e.printStackTrace();
+            logger.info(e.getMessage());
         }
 
         if(json!=null && json.equals("on")) {
