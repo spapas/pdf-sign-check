@@ -99,3 +99,75 @@
 2022-03-15 13:37:46,592 INFO org.springframework.boot.web.embedded.jetty.JettyWebServer [restartedMain] Jetty started on port(s) 8081 (http/1.1) with context path '/'
 2022-03-15 13:37:46,596 INFO org.springframework.boot.StartupInfoLogger [restartedMain] Started Application in 0.506 seconds (JVM running for 132.182)
 2022-03-15 13:37:46,598 INFO org.springframework.boot.devtools.autoconfigure.ConditionEvaluationDeltaLoggingListener [restartedMain] Condition evaluation unchanged
+2022-03-15 13:39:24,544 INFO org.eclipse.jetty.server.AbstractConnector [Thread-39] Stopped ServerConnector@7b1d7cbe{HTTP/1.1, (http/1.1)}{0.0.0.0:8081}
+2022-03-15 13:39:24,544 INFO org.eclipse.jetty.server.session.HouseKeeper [Thread-39] node0 Stopped scavenging
+2022-03-15 13:39:24,545 INFO org.eclipse.jetty.server.handler.ContextHandler$Context [Thread-39] Destroying Spring FrameworkServlet 'dispatcherServlet'
+2022-03-15 13:39:24,546 INFO org.eclipse.jetty.server.handler.ContextHandler [Thread-39] Stopped o.s.b.w.e.j.JettyEmbeddedWebAppContext@55633db4{application,/,[file:///C:/Users/serafeim/AppData/Local/Temp/jetty-docbase.8081.15928679075930127771/],STOPPED}
+2022-03-15 13:39:24,547 INFO org.springframework.scheduling.concurrent.ExecutorConfigurationSupport [Thread-39] Shutting down ExecutorService 'applicationTaskExecutor'
+2022-03-15 13:39:24,655 INFO org.springframework.boot.StartupInfoLogger [restartedMain] Starting Application on SERAFEIM-TURBOX with PID 5432 (C:\progr\java\pdf-sign-check\target\classes started by serafeim in C:\progr\java\pdf-sign-check)
+2022-03-15 13:39:24,656 DEBUG org.springframework.boot.StartupInfoLogger [restartedMain] Running with Spring Boot v2.3.12.RELEASE, Spring v5.2.15.RELEASE
+2022-03-15 13:39:24,656 INFO org.springframework.boot.SpringApplication [restartedMain] No active profile set, falling back to default profiles: default
+2022-03-15 13:39:24,962 INFO org.springframework.boot.web.embedded.jetty.JettyServletWebServerFactory [restartedMain] Server initialized with port: 8081
+2022-03-15 13:39:24,963 INFO org.eclipse.jetty.server.Server [restartedMain] jetty-9.4.42.v20210604; built: 2021-06-04T17:33:38.939Z; git: 5cd5e6d2375eeab146813b0de9f19eda6ab6e6cb; jvm 15+36-1562
+2022-03-15 13:39:24,965 INFO org.eclipse.jetty.server.handler.ContextHandler$Context [restartedMain] Initializing Spring embedded WebApplicationContext
+2022-03-15 13:39:24,965 INFO org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext [restartedMain] Root WebApplicationContext: initialization completed in 306 ms
+2022-03-15 13:39:24,971 INFO org.eclipse.jetty.server.session.DefaultSessionIdManager [restartedMain] DefaultSessionIdManager workerName=node0
+2022-03-15 13:39:24,972 INFO org.eclipse.jetty.server.session.DefaultSessionIdManager [restartedMain] No SessionScavenger set, using defaults
+2022-03-15 13:39:24,972 INFO org.eclipse.jetty.server.session.HouseKeeper [restartedMain] node0 Scavenging every 660000ms
+2022-03-15 13:39:24,973 INFO org.eclipse.jetty.server.handler.ContextHandler [restartedMain] Started o.s.b.w.e.j.JettyEmbeddedWebAppContext@83685e5{application,/,[file:///C:/Users/serafeim/AppData/Local/Temp/jetty-docbase.8081.17354735575401577192/],AVAILABLE}
+2022-03-15 13:39:24,974 INFO org.eclipse.jetty.server.Server [restartedMain] Started @230559ms
+2022-03-15 13:39:25,006 INFO org.springframework.scheduling.concurrent.ExecutorConfigurationSupport [restartedMain] Initializing ExecutorService 'applicationTaskExecutor'
+2022-03-15 13:39:25,055 INFO org.springframework.boot.devtools.autoconfigure.OptionalLiveReloadServer [restartedMain] LiveReload server is running on port 35729
+2022-03-15 13:39:25,063 INFO org.eclipse.jetty.server.handler.ContextHandler$Context [restartedMain] Initializing Spring DispatcherServlet 'dispatcherServlet'
+2022-03-15 13:39:25,063 INFO org.springframework.web.servlet.FrameworkServlet [restartedMain] Initializing Servlet 'dispatcherServlet'
+2022-03-15 13:39:25,064 INFO org.springframework.web.servlet.FrameworkServlet [restartedMain] Completed initialization in 1 ms
+2022-03-15 13:39:25,070 INFO org.eclipse.jetty.server.AbstractConnector [restartedMain] Started ServerConnector@93f0a3e{HTTP/1.1, (http/1.1)}{0.0.0.0:8081}
+2022-03-15 13:39:25,070 INFO org.springframework.boot.web.embedded.jetty.JettyWebServer [restartedMain] Jetty started on port(s) 8081 (http/1.1) with context path '/'
+2022-03-15 13:39:25,074 INFO org.springframework.boot.StartupInfoLogger [restartedMain] Started Application in 0.477 seconds (JVM running for 230.659)
+2022-03-15 13:39:25,075 INFO org.springframework.boot.devtools.autoconfigure.ConditionEvaluationDeltaLoggingListener [restartedMain] Condition evaluation unchanged
+2022-03-15 13:39:49,095 INFO org.eclipse.jetty.server.AbstractConnector [Thread-51] Stopped ServerConnector@93f0a3e{HTTP/1.1, (http/1.1)}{0.0.0.0:8081}
+2022-03-15 13:39:49,096 INFO org.eclipse.jetty.server.session.HouseKeeper [Thread-51] node0 Stopped scavenging
+2022-03-15 13:39:49,097 INFO org.eclipse.jetty.server.handler.ContextHandler$Context [Thread-51] Destroying Spring FrameworkServlet 'dispatcherServlet'
+2022-03-15 13:39:49,098 INFO org.eclipse.jetty.server.handler.ContextHandler [Thread-51] Stopped o.s.b.w.e.j.JettyEmbeddedWebAppContext@83685e5{application,/,[file:///C:/Users/serafeim/AppData/Local/Temp/jetty-docbase.8081.17354735575401577192/],STOPPED}
+2022-03-15 13:39:49,099 INFO org.springframework.scheduling.concurrent.ExecutorConfigurationSupport [Thread-51] Shutting down ExecutorService 'applicationTaskExecutor'
+2022-03-15 13:39:49,223 INFO org.springframework.boot.StartupInfoLogger [restartedMain] Starting Application on SERAFEIM-TURBOX with PID 5432 (C:\progr\java\pdf-sign-check\target\classes started by serafeim in C:\progr\java\pdf-sign-check)
+2022-03-15 13:39:49,224 DEBUG org.springframework.boot.StartupInfoLogger [restartedMain] Running with Spring Boot v2.3.12.RELEASE, Spring v5.2.15.RELEASE
+2022-03-15 13:39:49,224 INFO org.springframework.boot.SpringApplication [restartedMain] No active profile set, falling back to default profiles: default
+2022-03-15 13:39:49,528 INFO org.springframework.boot.web.embedded.jetty.JettyServletWebServerFactory [restartedMain] Server initialized with port: 8081
+2022-03-15 13:39:49,529 INFO org.eclipse.jetty.server.Server [restartedMain] jetty-9.4.42.v20210604; built: 2021-06-04T17:33:38.939Z; git: 5cd5e6d2375eeab146813b0de9f19eda6ab6e6cb; jvm 15+36-1562
+2022-03-15 13:39:49,530 INFO org.eclipse.jetty.server.handler.ContextHandler$Context [restartedMain] Initializing Spring embedded WebApplicationContext
+2022-03-15 13:39:49,531 INFO org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext [restartedMain] Root WebApplicationContext: initialization completed in 303 ms
+2022-03-15 13:39:49,538 INFO org.eclipse.jetty.server.session.DefaultSessionIdManager [restartedMain] DefaultSessionIdManager workerName=node0
+2022-03-15 13:39:49,538 INFO org.eclipse.jetty.server.session.DefaultSessionIdManager [restartedMain] No SessionScavenger set, using defaults
+2022-03-15 13:39:49,539 INFO org.eclipse.jetty.server.session.HouseKeeper [restartedMain] node0 Scavenging every 660000ms
+2022-03-15 13:39:49,541 INFO org.eclipse.jetty.server.handler.ContextHandler [restartedMain] Started o.s.b.w.e.j.JettyEmbeddedWebAppContext@46f209c0{application,/,[file:///C:/Users/serafeim/AppData/Local/Temp/jetty-docbase.8081.17765779842027806125/],AVAILABLE}
+2022-03-15 13:39:49,542 INFO org.eclipse.jetty.server.Server [restartedMain] Started @255127ms
+2022-03-15 13:39:49,575 INFO org.springframework.scheduling.concurrent.ExecutorConfigurationSupport [restartedMain] Initializing ExecutorService 'applicationTaskExecutor'
+2022-03-15 13:39:49,628 INFO org.springframework.boot.devtools.autoconfigure.OptionalLiveReloadServer [restartedMain] LiveReload server is running on port 35729
+2022-03-15 13:39:49,639 INFO org.eclipse.jetty.server.handler.ContextHandler$Context [restartedMain] Initializing Spring DispatcherServlet 'dispatcherServlet'
+2022-03-15 13:39:49,639 INFO org.springframework.web.servlet.FrameworkServlet [restartedMain] Initializing Servlet 'dispatcherServlet'
+2022-03-15 13:39:49,641 INFO org.springframework.web.servlet.FrameworkServlet [restartedMain] Completed initialization in 1 ms
+2022-03-15 13:39:49,647 INFO org.eclipse.jetty.server.AbstractConnector [restartedMain] Started ServerConnector@34a971db{HTTP/1.1, (http/1.1)}{0.0.0.0:8081}
+2022-03-15 13:39:49,648 INFO org.springframework.boot.web.embedded.jetty.JettyWebServer [restartedMain] Jetty started on port(s) 8081 (http/1.1) with context path '/'
+2022-03-15 13:39:49,654 INFO org.springframework.boot.StartupInfoLogger [restartedMain] Started Application in 0.502 seconds (JVM running for 255.239)
+2022-03-15 13:39:49,655 INFO org.springframework.boot.devtools.autoconfigure.ConditionEvaluationDeltaLoggingListener [restartedMain] Condition evaluation unchanged
+2022-03-15 13:39:51,913 INFO org.eclipse.jetty.server.AbstractConnector [Thread-63] Stopped ServerConnector@34a971db{HTTP/1.1, (http/1.1)}{0.0.0.0:8081}
+2022-03-15 13:39:51,914 INFO org.eclipse.jetty.server.session.HouseKeeper [Thread-63] node0 Stopped scavenging
+2022-03-15 13:39:51,915 INFO org.eclipse.jetty.server.handler.ContextHandler$Context [Thread-63] Destroying Spring FrameworkServlet 'dispatcherServlet'
+2022-03-15 13:39:51,916 INFO org.eclipse.jetty.server.handler.ContextHandler [Thread-63] Stopped o.s.b.w.e.j.JettyEmbeddedWebAppContext@46f209c0{application,/,[file:///C:/Users/serafeim/AppData/Local/Temp/jetty-docbase.8081.17765779842027806125/],STOPPED}
+2022-03-15 13:39:51,918 INFO org.springframework.scheduling.concurrent.ExecutorConfigurationSupport [Thread-63] Shutting down ExecutorService 'applicationTaskExecutor'
+2022-03-15 13:39:52,029 INFO org.springframework.boot.StartupInfoLogger [restartedMain] Starting Application on SERAFEIM-TURBOX with PID 5432 (C:\progr\java\pdf-sign-check\target\classes started by serafeim in C:\progr\java\pdf-sign-check)
+2022-03-15 13:39:52,030 DEBUG org.springframework.boot.StartupInfoLogger [restartedMain] Running with Spring Boot v2.3.12.RELEASE, Spring v5.2.15.RELEASE
+2022-03-15 13:39:52,030 INFO org.springframework.boot.SpringApplication [restartedMain] No active profile set, falling back to default profiles: default
+2022-03-15 13:39:52,277 INFO org.springframework.boot.web.embedded.jetty.JettyServletWebServerFactory [restartedMain] Server initialized with port: 8081
+2022-03-15 13:39:52,278 INFO org.eclipse.jetty.server.Server [restartedMain] jetty-9.4.42.v20210604; built: 2021-06-04T17:33:38.939Z; git: 5cd5e6d2375eeab146813b0de9f19eda6ab6e6cb; jvm 15+36-1562
+2022-03-15 13:39:52,279 INFO org.eclipse.jetty.server.handler.ContextHandler$Context [restartedMain] Initializing Spring embedded WebApplicationContext
+2022-03-15 13:39:52,279 INFO org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext [restartedMain] Root WebApplicationContext: initialization completed in 247 ms
+2022-03-15 13:39:52,285 INFO org.eclipse.jetty.server.session.DefaultSessionIdManager [restartedMain] DefaultSessionIdManager workerName=node0
+2022-03-15 13:39:52,285 INFO org.eclipse.jetty.server.session.DefaultSessionIdManager [restartedMain] No SessionScavenger set, using defaults
+2022-03-15 13:39:52,286 INFO org.eclipse.jetty.server.session.HouseKeeper [restartedMain] node0 Scavenging every 660000ms
+2022-03-15 13:39:52,288 INFO org.eclipse.jetty.server.handler.ContextHandler [restartedMain] Started o.s.b.w.e.j.JettyEmbeddedWebAppContext@41a919{application,/,[file:///C:/Users/serafeim/AppData/Local/Temp/jetty-docbase.8081.4533200442805738904/],AVAILABLE}
+2022-03-15 13:39:52,289 INFO org.eclipse.jetty.server.Server [restartedMain] Started @257874ms
+2022-03-15 13:39:52,325 INFO org.springframework.scheduling.concurrent.ExecutorConfigurationSupport [restartedMain] Initializing ExecutorService 'applicationTaskExecutor'
+2022-03-15 13:39:52,367 INFO org.springframework.boot.devtools.autoconfigure.OptionalLiveReloadServer [restartedMain] LiveReload server is running on port 35729
+2022-03-15 13:39:52,374 INFO org.eclipse.jetty.server.handler.ContextHandler$Context [restartedMain] Initializing Spring DispatcherServlet 'dispatcherServlet'
