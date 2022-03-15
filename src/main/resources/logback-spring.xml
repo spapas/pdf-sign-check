@@ -52,4 +52,9 @@
         <appender-ref ref="RollingFile" />
         <appender-ref ref="Console" />
     </root>
+
+    <logger name="gr.hcg" level="trace" additivity="false">
+        <appender-ref ref="RollingFile" />
+        <appender-ref ref="Console" />
+    </logger>
 </configuration>
