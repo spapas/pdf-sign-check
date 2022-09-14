@@ -6,6 +6,7 @@ import gr.hcg.check.PDFSignatureInfoParser;
 import gr.hcg.services.UploadDocumentService;
 import gr.hcg.sign.Signer;
 import gr.hcg.views.JsonView;
+import org.bouncycastle.tsp.TSPException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.beans.factory.annotation.Value;
@@ -139,7 +140,8 @@ public class SignController {
                     return respondHtmlOrJson(json, model, response);
                 }
 
-            } catch (IOException | InvalidNameException | CertificateException | NoSuchAlgorithmException | SignatureException | InvalidKeyException | NoSuchProviderException e) {
+            } catch (IOException | InvalidNameException | CertificateException | NoSuchAlgorithmException |
+                     SignatureException | InvalidKeyException | NoSuchProviderException | TSPException e) {
 
                 e.printStackTrace();
                 model.addAttribute("error", true);

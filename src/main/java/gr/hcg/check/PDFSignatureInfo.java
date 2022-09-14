@@ -14,8 +14,9 @@ public class PDFSignatureInfo {
     public String filter;
     public String contactInfo;
     public String location;
-
     public Date signDate;
+
+    public boolean hasTSAToken;
 
     public boolean coversWholeDocument;
     public boolean isSelfSigned;

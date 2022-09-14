@@ -3,6 +3,7 @@ package gr.hcg.controllers;
 import gr.hcg.check.PDFSignatureInfo;
 import gr.hcg.check.PDFSignatureInfoParser;
 import gr.hcg.views.JsonView;
+import org.bouncycastle.tsp.TSPException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -56,7 +57,8 @@ public class CheckSignatureController {
             model.addAttribute("filename", file.getOriginalFilename());
             model.addAttribute("pdfSignatureInfo", info);
 
-        } catch (IOException | InvalidNameException | CertificateException| NoSuchAlgorithmException | InvalidKeyException |SignatureException | NoSuchProviderException e) {
+        } catch (IOException | InvalidNameException | CertificateException | NoSuchAlgorithmException |
+                 InvalidKeyException | SignatureException | NoSuchProviderException | TSPException e) {
             model.addAttribute("message", "Cannot open file: " + e.getMessage());
             e.printStackTrace();
             logger.info(e.getMessage());

@@ -481,6 +481,8 @@ public final class ShowSignature
             {
                 System.err.println("timestamp signature verification failed");
             }
+        } else {
+            System.err.println("certificate has no timestamp");
         }
 
         try

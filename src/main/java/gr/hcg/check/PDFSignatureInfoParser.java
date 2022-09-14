@@ -20,6 +20,7 @@ import java.security.cert.*;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
+import gr.hcg.sign.SigUtils;
 import org.apache.pdfbox.cos.COSBase;
 import org.apache.pdfbox.cos.COSDictionary;
 import org.apache.pdfbox.cos.COSName;
@@ -35,6 +36,8 @@ import org.bouncycastle.cms.CMSSignedData;
 import org.bouncycastle.cms.SignerInformation;
 import org.bouncycastle.cms.jcajce.JcaSimpleSignerInfoVerifierBuilder;
 import org.bouncycastle.operator.OperatorCreationException;
+import org.bouncycastle.tsp.TSPException;
+import org.bouncycastle.tsp.TimeStampToken;
 import org.bouncycastle.util.Store;
 import org.bouncycastle.util.StoreException;
 
@@ -60,9 +63,12 @@ public class PDFSignatureInfoParser {
      */
     public static void main(String[] args) throws IOException, CertificateException,
             NoSuchAlgorithmException, InvalidKeyException,
-            NoSuchProviderException, SignatureException, InvalidNameException {
+            NoSuchProviderException, SignatureException, InvalidNameException, TSPException {
         PDFSignatureInfoParser show = new PDFSignatureInfoParser();
-        show.getPDFSignatureInfo( new FileInputStream(new File("y.pdf")));
+        List<PDFSignatureInfo> pdfSignatureInfo = show.getPDFSignatureInfo(new FileInputStream(new File("..\\s1.pdf")));
+        for(PDFSignatureInfo psi: pdfSignatureInfo) {
+            System.out.println(psi);
+        }
     }
 
     private static byte[] getbyteArray(InputStream is) throws IOException {
@@ -82,7 +88,7 @@ public class PDFSignatureInfoParser {
 
     public static List<PDFSignatureInfo> getPDFSignatureInfo(InputStream is ) throws IOException, CertificateException,
             NoSuchAlgorithmException, InvalidKeyException,
-            NoSuchProviderException, SignatureException, InvalidNameException {
+            NoSuchProviderException, SignatureException, InvalidNameException, TSPException {
 
         byte[] byteArray = getbyteArray(is);
         return getPDFSignatureInfo(byteArray);
@@ -90,7 +96,7 @@ public class PDFSignatureInfoParser {
 
     public static List<PDFSignatureInfo> getPDFSignatureInfo(byte[] byteArray ) throws IOException, CertificateException,
             NoSuchAlgorithmException, InvalidKeyException,
-            NoSuchProviderException, SignatureException, InvalidNameException {
+            NoSuchProviderException, SignatureException, InvalidNameException, TSPException {
 
         List<PDFSignatureInfo> lpsi = new ArrayList<PDFSignatureInfo>();
 
@@ -209,7 +215,7 @@ public class PDFSignatureInfoParser {
      */
     private static void verifyPKCS7(byte[] byteArray, COSString contents, PDSignature sig, PDFSignatureInfo psi)
             throws CMSException, CertificateException, StoreException, OperatorCreationException,
-            NoSuchAlgorithmException, NoSuchProviderException, InvalidNameException {
+            NoSuchAlgorithmException, NoSuchProviderException, InvalidNameException, IOException, TSPException {
         // inspiration:
         // http://stackoverflow.com/a/26702631/535646
         // http://stackoverflow.com/a/9261365/535646
@@ -222,7 +228,12 @@ public class PDFSignatureInfoParser {
         X509CertificateHolder certificateHolder = (X509CertificateHolder) matches.iterator().next();
         X509Certificate certFromSignedData = new JcaX509CertificateConverter().getCertificate(certificateHolder);
 
-        //System.out.println("certFromSignedData: " + certFromSignedData);
+        TimeStampToken timeStampToken = SigUtils.extractTimeStampTokenFromSignerInformation(signerInformation);
+        if(timeStampToken==null) {
+            psi.hasTSAToken = false;
+        } else {
+            psi.hasTSAToken = true;
+        }
 
         CertificateInfo ci = new CertificateInfo();
         psi.certificateInfo = ci;
@@ -246,6 +257,7 @@ public class PDFSignatureInfoParser {
         }
 
         certFromSignedData.checkValidity(sig.getSignDate().getTime());
+
 
         if (isSelfSigned(certFromSignedData)) {
             //System.err.println("Certificate is self-signed, LOL!");
