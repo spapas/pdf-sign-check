@@ -16,7 +16,7 @@ public class PDFSignatureInfo {
     public String location;
     public Date signDate;
 
-    public boolean hasTSAToken;
+    public boolean hasTsaToken;
 
     public boolean coversWholeDocument;
     public boolean isSelfSigned;

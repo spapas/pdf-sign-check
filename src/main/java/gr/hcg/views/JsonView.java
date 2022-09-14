@@ -14,8 +14,6 @@ public class JsonView {
 
         Gson gson = new Gson();
         String json = gson.toJson(model);
-
-
         try {
             response.setContentType("application/json");
             response.setCharacterEncoding("UTF-8");

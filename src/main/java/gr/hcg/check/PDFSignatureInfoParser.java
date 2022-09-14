@@ -276,9 +276,9 @@ public class PDFSignatureInfoParser {
     private static void checkTSA(PDFSignatureInfo psi, Store certificatesStore, SignerInformation signerInformation) throws CMSException, IOException, TSPException, CertificateException, OperatorCreationException, NoSuchAlgorithmException {
         TimeStampToken timeStampToken = SigUtils.extractTimeStampTokenFromSignerInformation(signerInformation);
         if(timeStampToken==null) {
-            psi.hasTSAToken = false;
+            psi.hasTsaToken = false;
         } else {
-            psi.hasTSAToken = true;
+            psi.hasTsaToken = true;
         }
 
         if (timeStampToken != null) {
