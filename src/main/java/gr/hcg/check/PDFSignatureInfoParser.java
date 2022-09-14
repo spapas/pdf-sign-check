@@ -38,6 +38,7 @@ import org.bouncycastle.cms.jcajce.JcaSimpleSignerInfoVerifierBuilder;
 import org.bouncycastle.operator.OperatorCreationException;
 import org.bouncycastle.tsp.TSPException;
 import org.bouncycastle.tsp.TimeStampToken;
+import org.bouncycastle.util.CollectionStore;
 import org.bouncycastle.util.Store;
 import org.bouncycastle.util.StoreException;
 
@@ -228,12 +229,7 @@ public class PDFSignatureInfoParser {
         X509CertificateHolder certificateHolder = (X509CertificateHolder) matches.iterator().next();
         X509Certificate certFromSignedData = new JcaX509CertificateConverter().getCertificate(certificateHolder);
 
-        TimeStampToken timeStampToken = SigUtils.extractTimeStampTokenFromSignerInformation(signerInformation);
-        if(timeStampToken==null) {
-            psi.hasTSAToken = false;
-        } else {
-            psi.hasTSAToken = true;
-        }
+        checkTSA(psi, certificatesStore, signerInformation);
 
         CertificateInfo ci = new CertificateInfo();
         psi.certificateInfo = ci;
@@ -274,6 +270,52 @@ public class PDFSignatureInfoParser {
         } else {
             //System.out.println("Signature verification failed");
             psi.signatureVerified="NO";
+        }
+    }
+
+    private static void checkTSA(PDFSignatureInfo psi, Store certificatesStore, SignerInformation signerInformation) throws CMSException, IOException, TSPException, CertificateException, OperatorCreationException, NoSuchAlgorithmException {
+        TimeStampToken timeStampToken = SigUtils.extractTimeStampTokenFromSignerInformation(signerInformation);
+        if(timeStampToken==null) {
+            psi.hasTSAToken = false;
+        } else {
+            psi.hasTSAToken = true;
+        }
+
+        if (timeStampToken != null) {
+            // tested with QV_RCA1_RCA3_CPCPS_V4_11.pdf
+            // https://www.quovadisglobal.com/~/media/Files/Repository/QV_RCA1_RCA3_CPCPS_V4_11.ashx
+            // also 021496.pdf and 036351.pdf from digitalcorpora
+            gr.hcg.check2.SigUtils.validateTimestampToken(timeStampToken);
+            @SuppressWarnings("unchecked") // TimeStampToken.getSID() is untyped
+            Collection<X509CertificateHolder> tstMatches =
+                    timeStampToken.getCertificates().getMatches(timeStampToken.getSID());
+            X509CertificateHolder tstCertHolder = tstMatches.iterator().next();
+            X509Certificate certFromTimeStamp = new JcaX509CertificateConverter().getCertificate(tstCertHolder);
+            // merge both stores using a set to remove duplicates
+            HashSet<X509CertificateHolder> certificateHolderSet = new HashSet<X509CertificateHolder>();
+            certificateHolderSet.addAll(certificatesStore.getMatches(null));
+            certificateHolderSet.addAll(timeStampToken.getCertificates().getMatches(null));
+            /*
+            try {
+                gr.hcg.check2.SigUtils.verifyCertificateChain(new CollectionStore<X509CertificateHolder>(certificateHolderSet),
+                        certFromTimeStamp,
+                        timeStampToken.getTimeStampInfo().getGenTime());
+            } catch(Exception e) {
+                throw new TSPException("Error while verifying TSA");
+            }
+
+             */
+            gr.hcg.check2.SigUtils.checkTimeStampCertificateUsage(certFromTimeStamp);
+
+            // compare the hash of the signature with the hash in the timestamp
+            byte[] tsMessageImprintDigest = timeStampToken.getTimeStampInfo().getMessageImprintDigest();
+            String hashAlgorithm = timeStampToken.getTimeStampInfo().getMessageImprintAlgOID().getId();
+            byte[] sigMessageImprintDigest = MessageDigest.getInstance(hashAlgorithm).digest(signerInformation.getSignature());
+            if (Arrays.equals(tsMessageImprintDigest, sigMessageImprintDigest)) {
+                // Happy path...
+            } else {
+                throw new TSPException("Error while verifying TSA");
+            }
         }
     }
 
