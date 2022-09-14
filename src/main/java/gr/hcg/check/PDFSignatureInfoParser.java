@@ -98,11 +98,13 @@ public class PDFSignatureInfoParser {
         try (PDDocument document = PDDocument.load(new ByteArrayInputStream(byteArray))) {
             // Get Signature dictionaries of PDF
             for (PDSignature sig : document.getSignatureDictionaries()) {
+
                 PDFSignatureInfo psi = new PDFSignatureInfo();
                 lpsi.add(psi);
 
                 COSDictionary sigDict = sig.getCOSObject();
                 COSString contents = (COSString) sigDict.getDictionaryObject(COSName.CONTENTS);
+
 
                 Set<Map.Entry<COSName, COSBase>> entries = sigDict.entrySet();
                 for(Map.Entry<COSName, COSBase> entry: entries) {
