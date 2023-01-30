@@ -13,7 +13,8 @@
 
 <form method="POST" action="" enctype="multipart/form-data">
     <input type="file" name="file" />
-    <Label for="json">Json output:<input id="json" type="checkbox" name="json" /></Label>
+    <label for="json">Json output:<input id="json" type="checkbox" name="json" /></label>
+    <label for="contents">Read content:<input id="contents" type="checkbox" name="contents" /></label>
     <br/><br/>
     <input type="submit" value="Submit" />
 </form>
@@ -36,7 +37,7 @@
 
     IsSelfSigned: <span th:text="${signature.isSelfSigned}"></span><br />
     SignatureVerified: <span th:text="${signature.signatureVerified}"></span><br />
-    Has TSA Token: <span th:text="${signature.hasTSAToken}"></span><br />
+    Has TSA Token: <span th:text="${signature.hasTsaToken}"></span><br />
 
 
     <h3>Entries</h3>
@@ -77,7 +78,11 @@
 
 </div>
 
-
+<div th:if="${contents}">
+<hr />
+<h2>Contents</h2>
+<div style="white-space: pre-line" th:text="${contents}"></div><br />
+</div>
 
 
 <footer>
