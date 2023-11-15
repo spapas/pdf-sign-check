@@ -118,6 +118,14 @@
             <version>${tika.version}</version>
         </dependency>
 
+        <!-- https://mvnrepository.com/artifact/org.jodconverter/jodconverter-local-lo -->
+        <dependency>
+            <groupId>org.jodconverter</groupId>
+            <artifactId>jodconverter-local-lo</artifactId>
+            <version>4.4.6</version>
+        </dependency>
+
+
     </dependencies>
 
     <build>
